@@ -1,4 +1,4 @@
-# denary_numbers.py
+# denary_number.py
 
 
 class DenaryNumber:
