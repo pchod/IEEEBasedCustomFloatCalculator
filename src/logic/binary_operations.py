@@ -58,61 +58,47 @@ class BinaryOperations:
     @staticmethod
     def subtract_binaries(binary_1: str, binary_2: str):
         """Subtracting binary_1 - binary_2 using bitwise operations. It is guaranteed, that binary_1 > binary_2 - need to add the check"""
-        ic(binary_1, binary_2)
+        #ic(binary_1, binary_2)
         subtraction_product = []
         borrow = False
 
         # performing subtraction from right to left
         for index in range((len(binary_1) - 1), -1, -1):
-            ic(subtraction_product)
+            # ic(subtraction_product)
             bit_binary_1 = binary_1[index]
             bit_binary_2 = binary_2[index]
-            print()
-            print("state before subtraction, checking remaining borrow based on the previous iteration")
-            ic(bit_binary_1, bit_binary_2, borrow)
-            #if borrow:
-                # the borrowed bit is nullified succesfuly and borrow flag is set to false
-            #    if bit_binary_1 == "1":
-            #        bit_binary_1 = "0"
-            #        ic(bit_binary_1)
-            #        borrow = False
-            #        ic(borrow)
-            #    else:
-            #        bit_binary_1 = "1"
-            #        ic(bit_binary_1)
-            #       ic(borrow)
-                # keeping the borrow for the next iteration
-                #else:
-                #    bit_binary_1 = "1"
-            print()
-            print("state after checking borrow")
-            ic(bit_binary_1, bit_binary_2, borrow)
-            print()
-            print("starting subtraction")
-            ic(bit_binary_1, bit_binary_2, borrow)
+            #print()
+            #print("state before subtraction, checking remaining borrow based on the previous iteration")
+            #ic(bit_binary_1, bit_binary_2, borrow)
+            #print()
+            #print("state after checking borrow")
+            #ic(bit_binary_1, bit_binary_2, borrow)
+            #print()
+            #print("starting subtraction")
+            #ic(bit_binary_1, bit_binary_2, borrow)
             # checked and correct
             if bit_binary_1 < bit_binary_2:
-                print("bit 1 is lower than bit 2")
+                #print("bit 1 is lower than bit 2")
                 borrow = True
-                ic(borrow)
+                #ic(borrow)
 
                 subtraction_product.append("1")
 
             elif bit_binary_1 > bit_binary_2:
                 subtraction_product.append("0" if borrow else "1")
-                print("bit 1 is higher than bit 2")
+                #print("bit 1 is higher than bit 2")
                 if borrow:
                     borrow = False
 
             else:
                 # for equal bits the product is 0, if the bit is borrowed, be become 1
-                print("bit 1 is equal to bit 2")
+                #print("bit 1 is equal to bit 2")
                 subtraction_product.append("1" if borrow else "0")
                 borrow = (bit_binary_1 == "0") and borrow
-        ic(subtraction_product)
+        #ic(subtraction_product)
         subtraction_product_reversed = reversed(subtraction_product)
         subtraction_product_bin = "".join(subtraction_product_reversed)
-        ic(subtraction_product_bin)
+        #ic(subtraction_product_bin)
         return subtraction_product_bin
 
     @staticmethod
@@ -121,15 +107,21 @@ class BinaryOperations:
     ):
         """Performing a division to get the whole part of the binary fraction. Returns the whole part
         and the remainder for the further division for fractional part"""
+        print()
+        print("new division")
+        print()
+        ic(numerator_bin, denominator_bin)
         numerator_bin = numerator_bin.lstrip("0")
         denominator_bin = denominator_bin.lstrip("0")
+        ic(numerator_bin, denominator_bin)
         whole_part_bin = ""
         remainder_bin = ""
 
         for bit in numerator_bin:
             remainder_bin += bit
-            if remainder_bin >= denominator_bin:
-                whole_part_bin += "1"
+            ic(bit, remainder_bin, denominator_bin, whole_part_bin)
+            if len(remainder_bin) >= len(denominator_bin) and (remainder_bin >= denominator_bin):
+                
                 remainder_bin, denominator_bin = (
                     BinaryOperations.left_zero_pad_shorter_bin(
                         remainder_bin, denominator_bin
@@ -139,15 +131,20 @@ class BinaryOperations:
                 remainder_bin = BinaryOperations.subtract_binaries(
                     remainder_bin, denominator_bin
                 )
-                ic(remainder_bin, denominator_bin)
+                print()
+                print("after subtraction")
+                whole_part_bin += "1"
+                ic(remainder_bin, denominator_bin, whole_part_bin)
+                print()
             else:
                 whole_part_bin += "0"
         ic(remainder_bin, denominator_bin)
         whole_part_bin = whole_part_bin.lstrip("0")
-        ic(whole_part_bin)
+        if not whole_part_bin:
+            whole_part_bin = "0"
+        ic(whole_part_bin, remainder_bin)
         return whole_part_bin, remainder_bin
 
-    """
     @staticmethod
     def convert_to_binary_fraction_fraction_part(
         numerator_bin: str,
@@ -187,7 +184,7 @@ class BinaryOperations:
 
                 ic(temp_remainder)
 
-                if len(temp_remainder) > len(remainder_after_whole_part) or len(temp_remainder) == len(remaninder_after_whole_part) and temp_remainder >= remainder_after_whole_part:
+                if len(temp_remainder) > len(remainder_after_whole_part) or len(temp_remainder) == len(remainder_after_whole_part) and temp_remainder >= remainder_after_whole_part:
                     fractional_part_bin += "1"
                     ic(fractional_part_bin)
                     temp_remainder, remainder_after_whole_part = (
@@ -205,17 +202,17 @@ class BinaryOperations:
         print(len(fractional_part_bin))
         # fractional_part_bin = "".join(fractional_part_bin)
         # rounding part
-        if fractional_part_bin[-1] == "1":
-            if fractional_part_bin[-2] == "0":
-                fractional_part_bin = fractional_part_bin[:-2]
-                fractional_part_bin += "1"
-                is_rounded = True
-            else:
-                fractional_part_bin = fractional_part_bin[:-1]
-        else:
-            fractional_part_bin = fractional_part_bin[:-1]
+        # if fractional_part_bin[-1] == "1":
+        #    if fractional_part_bin[-2] == "0":
+        #        fractional_part_bin = fractional_part_bin[:-2]
+        #        fractional_part_bin += "1"
+        #        is_rounded = True
+        #    else:
+        #        fractional_part_bin = fractional_part_bin[:-1]
+        #else:
+        #    fractional_part_bin = fractional_part_bin[:-1]
 
-        return fractional_part_bin, is_rounded
+        return fractional_part_bin, # is_rounded
 """
 
     @staticmethod
@@ -236,8 +233,8 @@ class BinaryOperations:
             )
             was_normalised = True
             return fractional_part_bin, left_shift, was_normalised
-        """
-    @staticmethod
+    """
+"""@staticmethod
     def convert_from_binary_fraction_to_IEEE_float():
         pass
 
