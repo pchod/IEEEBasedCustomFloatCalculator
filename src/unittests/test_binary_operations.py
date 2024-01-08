@@ -59,23 +59,102 @@ class TestBinaryOperations(unittest.TestCase):
         )
 
     def test_convert_to_binary_fraction_whole_part(self):
+        # Test case 1: Short numerator, short denominator
+        whole_part, remainder = (
+            BinaryOperations.convert_to_binary_fraction_whole_part("101", "11")
+        )
+        self.assertEqual(whole_part, "10")
+        self.assertEqual(remainder, "1")
+
+        # Test case 2: Short numerator, longer denominator
         whole_part, remainder = (
             BinaryOperations.convert_to_binary_fraction_whole_part(
-                "1010", "110"
+                "110", "1101"
             )
         )
-        self.assertEqual(whole_part, "11")
-        self.assertEqual(remainder, "10")
+        self.assertEqual(whole_part, "0")
+        self.assertEqual(remainder, "110")
 
-    def test_convert_to_binary_fraction_fraction_part(self):
-        fraction_part, is_rounded = (
-            BinaryOperations.convert_to_binary_fraction_fraction_part(
-                "101", "01", self.ieee_format
+        # Test case 3: Longer numerator, short denominator
+        whole_part, remainder = (
+            BinaryOperations.convert_to_binary_fraction_whole_part(
+                "10101", "11"
             )
         )
-        self.assertIsInstance(fraction_part, str)
-        self.assertIsInstance(is_rounded, bool)
-        # Note: You may need to adjust this test based on the expected behavior of the method
+        self.assertEqual(whole_part, "1010")
+        self.assertEqual(remainder, "1")
+
+        # Test case 4: Equal-length numerator, equal-length denominator
+        whole_part, remainder = (
+            BinaryOperations.convert_to_binary_fraction_whole_part(
+                "1100", "1100"
+            )
+        )
+        self.assertEqual(whole_part, "10")
+        self.assertEqual(remainder, "0")
+
+        # Test case 5: Longer numerator, longer denominator
+        whole_part, remainder = (
+            BinaryOperations.convert_to_binary_fraction_whole_part(
+                "111101", "11001"
+            )
+        )
+        self.assertEqual(whole_part, "101")
+        self.assertEqual(remainder, "100")
+
+        # Test case 6: Numerator is zero
+        whole_part, remainder = (
+            BinaryOperations.convert_to_binary_fraction_whole_part("0", "1101")
+        )
+        self.assertEqual(whole_part, "0")
+        self.assertEqual(remainder, "0")
+
+        # Test case 7: Denominator is zero
+        with self.assertRaises(ValueError):
+            whole_part, remainder = (
+                BinaryOperations.convert_to_binary_fraction_whole_part(
+                    "10101", "0"
+                )
+            )
+
+        # Test case 8: Numerator and denominator are empty
+        with self.assertRaises(ValueError):
+            whole_part, remainder = (
+                BinaryOperations.convert_to_binary_fraction_whole_part("", "")
+            )
+
+        # Test case 9: Numerator is empty, denominator is non-empty
+        whole_part, remainder = (
+            BinaryOperations.convert_to_binary_fraction_whole_part("", "101")
+        )
+        self.assertEqual(whole_part, "0")
+        self.assertEqual(remainder, "")
+
+        # Test case 10: Both numerator and denominator are very long
+        whole_part, remainder = (
+            BinaryOperations.convert_to_binary_fraction_whole_part(
+                "101011010101010110101010101101010101010101010101101010101011010101010101010101010101101010101011010101010101010101010101010101101010101011010101010101010101010101010101101010101011010101010101010101010101010101101010101011010101010101010101010101010101",
+                "110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110110",
+            )
+        )
+        self.assertEqual(
+            whole_part,
+            "1100100101101011011001001100010111101110011100111111101001011101110010001101111011101011100010101110110101101010111110001111001011111",
+        )
+        self.assertEqual(
+            remainder,
+            "1001011111010110111001001001010101100100100110110001001010000101101110011011000010011101100000001010011100011001001101101011010",
+        )
+
+        def test_convert_to_binary_fraction_fraction_part(self):
+            fraction_part, is_rounded = (
+                BinaryOperations.convert_to_binary_fraction_fraction_part(
+                    "10101010", "11001100", self.ieee_format
+                )
+            )
+            self.assertIsInstance(fraction_part, str)
+            self.assertIsInstance(is_rounded, bool)
+            # Note: You may need to adjust this test based on the expected behavior of the method
 
     def test_normalise_binary_fraction(self):
         normalised_fraction, left_shift, was_normalised = (
