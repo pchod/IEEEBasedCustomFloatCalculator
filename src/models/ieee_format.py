@@ -14,6 +14,18 @@ class IEEEFormat:
             self.SIGN_BIT_LENGTH + self.exponent_length + self.mantissa_length
         )
         self.minimum_exp = 2 ** (1 - self.bias)
+        self.max_normalised_exp = "1" * (exponent_length - 1) + "0"
+        self.max_normalised_exp_int = IEEEFormat.convert_exp_to_int(
+            self.max_normalised_exp
+        )
+
+    @staticmethod
+    def convert_exp_to_int(binary: str):
+        base = 2
+        number = 0
+        for i, bit in enumerate(binary[::-1]):
+            number += int(bit) * (base**i)
+        return number
 
 
 class IEEE16BitFormat(IEEEFormat):
