@@ -1,5 +1,7 @@
 # binary_operations.py
 
+from icecream import ic
+
 from models.ieee_format import IEEEFormat
 
 
@@ -37,11 +39,11 @@ class BinaryOperations:
 
         elif comparision == 1:
             left_padding = "0" * (len(binary_1) - len(binary_2))
-            binary_1 = left_padding + binary_1
+            binary_2 = left_padding + binary_2
             return binary_1, binary_2
         else:
             left_padding = "0" * (len(binary_2) - len(binary_1))
-            binary_2 = left_padding + binary_2
+            binary_1 = left_padding + binary_1
             return binary_1, binary_2
 
     @staticmethod
@@ -115,12 +117,14 @@ class BinaryOperations:
     def convert_to_binary_fraction_fraction_part(
         numerator_bin: str, remainder_bin: str, ieee_format: IEEEFormat
     ):
+        ic(numerator_bin, remainder_bin, ieee_format)
         if not remainder_bin:
             return "0"
         numerator_bin = numerator_bin.lstrip("0")
         remainder_bin += BinaryOperations.right_zero_pad(
             remainder_bin, ieee_format
         )
+        ic(numerator_bin, remainder_bin)
         fractional_part_bin = ""
         temp_remainder = ""
         is_rounded = False
@@ -132,10 +136,15 @@ class BinaryOperations:
             < ieee_format.max_normalised_exp_int + 1
         ) or (
             len(fractional_part_bin) < ieee_format.max_normalised_exp_int + 1
-            and "1" not in fractional_part_bin
+            and "1" in fractional_part_bin
         ):
+            ic(
+                fractional_part_bin,
+                ieee_format.max_normalised_exp_int,
+                numerator_bin,
+                temp_remainder,
+            )
             for bit in numerator_bin:
-                fractional_part_bin += bit
                 if temp_remainder >= remainder_bin:
                     fractional_part_bin += "1"
                     temp_remainder, remainder_bin = (
@@ -143,9 +152,11 @@ class BinaryOperations:
                             temp_remainder, remainder_bin
                         )
                     )
+                    ic(temp_remainder, remainder_bin)
                     temp_remainder = BinaryOperations.subtract_binaries(
                         temp_remainder, remainder_bin
                     )
+                    ic(temp_remainder, remainder_bin)
                 else:
                     fractional_part_bin += "0"
         fractional_part_bin = "".join(fractional_part_bin)
