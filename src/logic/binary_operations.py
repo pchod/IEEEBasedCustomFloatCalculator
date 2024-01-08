@@ -117,28 +117,32 @@ class BinaryOperations:
         whole_part_bin = ""
         remainder_bin = ""
 
-        for bit in numerator_bin:
+        for i, bit in enumerate(numerator_bin):
             remainder_bin += bit
             ic(bit, remainder_bin, denominator_bin, whole_part_bin)
-            if len(remainder_bin) >= len(denominator_bin) and (remainder_bin >= denominator_bin):
-                
-                remainder_bin, denominator_bin = (
-                    BinaryOperations.left_zero_pad_shorter_bin(
-                        remainder_bin, denominator_bin
-                    )
-                )
-                ic(remainder_bin, denominator_bin)
+            padded_remainder, padded_denominator = BinaryOperations.left_zero_pad_shorter_bin(
+                remainder_bin, denominator_bin
+            )
+            
+            if padded_remainder >= padded_denominator:
+            
+                #remainder_bin, denominator_bin = (
+                #    BinaryOperations.left_zero_pad_shorter_bin(
+                #        remainder_bin, denominator_part
+                #    )
+                #)
+                ic(remainder_bin, padded_denominator)
                 remainder_bin = BinaryOperations.subtract_binaries(
-                    remainder_bin, denominator_bin
+                    padded_remainder, padded_denominator
                 )
                 print()
                 print("after subtraction")
                 whole_part_bin += "1"
-                ic(remainder_bin, denominator_bin, whole_part_bin)
+                ic(remainder_bin, padded_denominator, whole_part_bin)
                 print()
             else:
                 whole_part_bin += "0"
-        ic(remainder_bin, denominator_bin)
+        ic(remainder_bin, padded_denominator)
         whole_part_bin = whole_part_bin.lstrip("0")
         if not whole_part_bin:
             whole_part_bin = "0"
