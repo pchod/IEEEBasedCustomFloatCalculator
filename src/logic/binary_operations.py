@@ -186,73 +186,84 @@ class BinaryOperations:
             whole_part_bin = "0"
         ic(whole_part_bin, remainder_bin)
         return whole_part_bin, remainder_bin
-
+    
+    @staticmethod
+    def is_whole_part_zero(whole_part_bin: str):
+        return True if not "1" in whole_part_bin else False
     @staticmethod
     def convert_to_binary_fraction_fraction_part(
-        numerator_bin: str,
         remainder_after_whole_part: str,
+        denominator_bin: str,
         ieee_format: IEEEFormat,
+        
     ):
-        ic(numerator_bin, remainder_after_whole_part, ieee_format)
-        pprint(ieee_format)
+        ic(remainder_after_whole_part, denominator_bin, ieee_format)
         if not remainder_after_whole_part:
             return "0"
-        numerator_bin = numerator_bin.lstrip("0")
+        denominator_bin = denominator_bin.lstrip("0")
         remainder_after_whole_part += BinaryOperations.right_zero_pad(
             remainder_after_whole_part, ieee_format
         )
         ic(numerator_bin, remainder_after_whole_part)
         fractional_part_bin = ""
         temp_remainder = ""
-        is_rounded = False
         # division until reaches
         # needs optimization in the next iteration - when the division is complete to pad with zeros
         # the loop goes until
-        while len(fractional_part_bin) < (
-            ieee_format.max_normalised_exp_int + 1
-        ):
-            print(len(fractional_part_bin))
-            ic(
-                fractional_part_bin,
-                ieee_format.max_normalised_exp_int,
-                numerator_bin,
-                temp_remainder,
+        #while len(fractional_part_bin) < (
+        #    ieee_format.max_normalised_exp_int + 1
+        #):
+        #    print(len(fractional_part_bin))
+        #    ic(
+        #        fractional_part_bin,
+        #        ieee_format.max_normalised_exp_int,
+        #        numerator_bin,
+        #        temp_remainder,
+        #    )
+        for i, bit in enumerate(numerator_bin):
+            remainder_bin += bit
+            ic(bit, remainder_bin, denominator_bin, whole_part_bin)
+            padded_remainder, padded_denominator = BinaryOperations.left_zero_pad_shorter_bin(
+                remainder_bin, denominator_bin
             )
-
-            for bit in numerator_bin:
-                temp_remainder += bit
-
-                ic(temp_remainder)
-
-                if len(temp_remainder) > len(remainder_after_whole_part) or len(temp_remainder) == len(remainder_after_whole_part) and temp_remainder >= remainder_after_whole_part:
-                    fractional_part_bin += "1"
-                    ic(fractional_part_bin)
-                    temp_remainder, remainder_after_whole_part = (
-                        BinaryOperations.left_zero_pad_shorter_bin(
-                            temp_remainder, remainder_after_whole_part
-                        )
-                    )
-                    ic(temp_remainder, remainder_after_whole_part)
-                    temp_remainder = BinaryOperations.subtract_binaries(
-                        temp_remainder, remainder_after_whole_part
-                    )
-                    ic(temp_remainder, remainder_after_whole_part)
-                else:
-                    fractional_part_bin += "0"
+            
+            if padded_remainder >= padded_denominator:
+            
+                #remainder_bin, denominator_bin = (
+                #    BinaryOperations.left_zero_pad_shorter_bin(
+                #        remainder_bin, denominator_part
+                #    )
+                #)
+                ic(remainder_bin, padded_denominator)
+                remainder_bin = BinaryOperations.subtract_binaries(
+                    padded_remainder, padded_denominator
+                )
+                print()
+                print("after subtraction")
+                whole_part_bin += "1"
+                ic(remainder_bin, padded_denominator, whole_part_bin)
+                print()
+            else:
+                whole_part_bin += "0"
         print(len(fractional_part_bin))
-        # fractional_part_bin = "".join(fractional_part_bin)
-        # rounding part
-        # if fractional_part_bin[-1] == "1":
-        #    if fractional_part_bin[-2] == "0":
-        #        fractional_part_bin = fractional_part_bin[:-2]
-        #        fractional_part_bin += "1"
-        #        is_rounded = True
-        #    else:
-        #        fractional_part_bin = fractional_part_bin[:-1]
-        #else:
-        #    fractional_part_bin = fractional_part_bin[:-1]
 
-        return fractional_part_bin, # is_rounded
+        return fractional_part_bin
+    #def round_binary_fraction_part(fractional_part_bin: str, ieee_format: IEEEFormat):
+    #    """"""
+    #    is_rounded = False
+    #    if not fractional_part_bin or fractional_part_bin == "0":
+    #        fractional_part_bin = "0" * ieee_format.mantissa_length
+    #        return fractional_part_bin, is_rounded = False
+    #    if len(fractional_part_bin) > ieee_format.mantissa_length:
+    #        fractional_part_bin = fractional_part_bin[:ieee_format.mantissa_length + 2]
+    #        if fractional_part_bin[-1] == "1" and fractional_part_bin[-2] == "0":
+    #            fractional_part_bin = fractional_part_bin[:-2] + "1"
+    #            is_rounded = True
+    #        else:
+    #           fractional_part_bin = fractional_part_bin[:-1]
+    #            is_rounded = False
+        
+
 """
 
     @staticmethod
