@@ -266,28 +266,35 @@ class BinaryOperations:
     #            is_rounded = False
         
 
-"""
-
+    # seems reduntant with the is_whole_part_zero function - needs to check
+    @staticmethod
+    def check_if_binary_needs_normalisation(
+        whole_part_bin: str, fractional_part_bin: str, ieee_format: IEEEFormat
+    ):
+        """ """
+        pass
+        
     @staticmethod
     def normalise_binary_fraction(
-        fractional_part_bin: str, ieee_format: IEEEFormat
-    ):
-        """"""
+        whole_part_bin: str, fractional_part_bin: str, ieee_format: IEEEFormat, is_whole_part_zero: bool
+    ) -> normalised_fraction: list, was_normalised: bool, exponent_bin: str:
+        """Used for normal numbers to convert to IEEE. need to add function for checking the normalisation range"""
         was_normalised = False
-        if fractional_part_bin[0] == "1":
-            return fractional_part_bin, was_normalised
+        exp_bin = ""
+        # needs all variables to print out
+        ic(whole_part_bin, fractional_part_bin, ieee_format.mantissa)
+        if not fractional_part_bin or fractional_part_bin == "0":
+            fractional_part_bin = BinaryOperations.right_zero_pad(fraction_part_bin=fractional_part_bin, ieee_format=ieee_format)
+        whole_part_bin = whole_part_bin.lstrip("0")
+        if not whole_part_bin:
+            whole_part_bin = "0"
+        
+        
+        if is_whole_part_zero:
+        ic(fraction_before_norm)
+        pass
 
-        else:
-            split_parts = fractional_part_bin.split("1", 1)[0]
-            left_shift = len(split_parts[0])
-            fractional_part_bin = split_parts[1]
-            fractional_part_bin = BinaryOperations.right_zero_pad(
-                fractional_part_bin, ieee_format
-            )
-            was_normalised = True
-            return fractional_part_bin, left_shift, was_normalised
-    """
-"""@staticmethod
+    @staticmethod
     def convert_from_binary_fraction_to_IEEE_float():
         pass
 
@@ -298,4 +305,4 @@ class BinaryOperations:
     @staticmethod
     def convert_from_binary_fraction_to_denary():
         pass
-    """
+
