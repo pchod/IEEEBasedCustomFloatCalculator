@@ -276,8 +276,8 @@ class BinaryOperations:
         
     @staticmethod
     def normalise_binary_fraction(
-        whole_part_bin: str, fractional_part_bin: str, ieee_format: IEEEFormat, is_whole_part_zero: bool
-    ) -> normalised_fraction: list, was_normalised: bool, exponent_bin: str:
+        whole_part_bin: str, fractional_part_bin: str, ieee_format: IEEEFormat, is_whole_part_zero: bool):
+        
         """Used for normal numbers to convert to IEEE. need to add function for checking the normalisation range"""
         was_normalised = False
         exp_bin = ""
@@ -305,4 +305,3 @@ class BinaryOperations:
     @staticmethod
     def convert_from_binary_fraction_to_denary():
         pass
-
