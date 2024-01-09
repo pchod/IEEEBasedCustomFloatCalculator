@@ -101,6 +101,39 @@ class BinaryOperations:
         #ic(subtraction_product_bin)
         return subtraction_product_bin
 
+    """@staticmethod
+    def perform_long_division(numerator_bin: str, denominator_bin: str, precision: None):
+        Implementation of a long division for binaries. Returns the whole part and the remainder. Serves as a helper
+        function for binary whole part and fractional part conversion
+        
+        division_product = ""
+        for i, bit in enumerate(numerator_bin):
+            remainder_bin += bit
+            ic(bit, remainder_bin, denominator_bin, whole_part_bin)
+            padded_remainder, padded_denominator = BinaryOperations.left_zero_pad_shorter_bin(
+                remainder_bin, denominator_bin
+            )
+            
+            if padded_remainder >= padded_denominator:
+            
+                #remainder_bin, denominator_bin = (
+                #    BinaryOperations.left_zero_pad_shorter_bin(
+                #        remainder_bin, denominator_part
+                #    )
+                #)
+                ic(remainder_bin, padded_denominator)
+                remainder_bin = BinaryOperations.subtract_binaries(
+                    padded_remainder, padded_denominator
+                )
+                print()
+                print("after subtraction")
+                whole_part_bin += "1"
+                ic(remainder_bin, padded_denominator, whole_part_bin)
+                print()
+            else:
+                whole_part_bin += "0"
+
+        return """
     @staticmethod
     def convert_to_binary_fraction_whole_part(
         numerator_bin: str, denominator_bin: str
@@ -112,6 +145,11 @@ class BinaryOperations:
         print()
         ic(numerator_bin, denominator_bin)
         numerator_bin = numerator_bin.lstrip("0")
+        if not numerator_bin: 
+            numerator_bin = "0"
+        # need for thoroygh testing
+        if not denominator_bin:
+            raise ValueError("Cannot divide by zero")
         denominator_bin = denominator_bin.lstrip("0")
         ic(numerator_bin, denominator_bin)
         whole_part_bin = ""
@@ -155,8 +193,6 @@ class BinaryOperations:
         remainder_after_whole_part: str,
         ieee_format: IEEEFormat,
     ):
-        pass
-    
         ic(numerator_bin, remainder_after_whole_part, ieee_format)
         pprint(ieee_format)
         if not remainder_after_whole_part:

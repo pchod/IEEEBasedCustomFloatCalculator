@@ -99,8 +99,8 @@ class TestBinaryOperations(unittest.TestCase):
                 "111101", "11001"
             )
         )
-        self.assertEqual(whole_part, "101")
-        self.assertEqual(remainder, "100")
+        self.assertEqual(whole_part, "10")
+        self.assertEqual(remainder, "001011")
 
         # Test case 6: Numerator is zero
         whole_part, remainder = (
