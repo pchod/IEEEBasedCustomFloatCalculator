@@ -146,16 +146,27 @@ class TestBinaryOperations(unittest.TestCase):
             "1001011111010110111001001001010101100100100110110001001010000101101110011011000010011101100000001010011100011001001101101011010",
         )
 
-    def test_convert_to_binary_fraction_fraction_part(self):
-        fraction_part, is_rounded = (
-            BinaryOperations.convert_to_binary_fraction_fraction_part(
-                "10101010", "11001100", self.ieee_format
-            )
+    def test_convert_to_binary_fraction_fraction_part_whole_part_zero(self):
+        self.ieee_format = IEEE16BitFormat()
+        fraction_part, is_rounded = BinaryOperations.convert_to_binary_fraction_fraction_part(
+            remainder_after_whole_part = "101",  # Example binary fraction part
+            denominator_bin = "110",  # Example binary denominator
+            is_whole_part_zero = True,  # Whole part is zero
+            ieee_format = self.ieee_format
         )
         self.assertIsInstance(fraction_part, str)
-        self.assertIsInstance(is_rounded, bool)
-        # Note: You may need to adjust this test based on the expected behavior of the method
-
+        # Include more assertions as needed to validate the fraction_part and is_rounded
+    def test_convert_to_binary_fraction_fraction_part_whole_part_non_zero(self):
+        self.ieee_format = IEEE16BitFormat()
+        fraction_part, is_rounded = BinaryOperations.convert_to_binary_fraction_fraction_part(
+            remainder_after_whole_part = "101",  # Example binary fraction part
+            denominator_bin = "110",  # Example binary denominator
+            is_whole_part_zero = False,  # Whole part is non-zero
+            ieee_format = self.ieee_format
+        )
+        self.assertIsInstance(fraction_part, str)
+        # Include more assertions as needed to validate the fraction_part and is_rounded
+        
     def test_normalise_binary_fraction(self):
         normalised_fraction, left_shift, was_normalised = (
             BinaryOperations.normalise_binary_fraction(

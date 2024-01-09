@@ -189,45 +189,40 @@ class BinaryOperations:
     
     @staticmethod
     def is_whole_part_zero(whole_part_bin: str):
+        "Used to check if the conversion to IEEE format will utilize left shifts. Returns True if the whole part is zero and no left shift is needed"
         return True if not "1" in whole_part_bin else False
+    
     @staticmethod
     def convert_to_binary_fraction_fraction_part(
         remainder_after_whole_part: str,
         denominator_bin: str,
+        is_whole_part_zero: bool,
         ieee_format: IEEEFormat,
         
     ):
-        ic(remainder_after_whole_part, denominator_bin, ieee_format)
-        if not remainder_after_whole_part:
+        ic(remainder_after_whole_part, denominator_bin, is_whole_part_zero, ieee_format.mantissa_length)
+        if not remainder_after_whole_part or remainder_after_whole_part == "0":
             return "0"
+        remainder_bin = ""
+        padded_current_remainder = ""
+        padded_denominator = ""
         denominator_bin = denominator_bin.lstrip("0")
-        remainder_after_whole_part += BinaryOperations.right_zero_pad(
-            remainder_after_whole_part, ieee_format
-        )
-        ic(numerator_bin, remainder_after_whole_part)
         fractional_part_bin = ""
-        temp_remainder = ""
-        # division until reaches
-        # needs optimization in the next iteration - when the division is complete to pad with zeros
-        # the loop goes until
-        #while len(fractional_part_bin) < (
-        #    ieee_format.max_normalised_exp_int + 1
-        #):
-        #    print(len(fractional_part_bin))
-        #    ic(
-        #        fractional_part_bin,
-        #        ieee_format.max_normalised_exp_int,
-        #        numerator_bin,
-        #        temp_remainder,
-        #    )
-        for i, bit in enumerate(numerator_bin):
+        i = 0
+        digits_after_first_1 = 0
+        first_1_found = not is_whole_part_zero
+        while (is_whole_part_zero and len(fractional_part_bin) < (ieee_format.mantissa_length + 1)) or (not first_1_found and len(fractional_part_bin) < (ieee_format.mantissa_length + 1)) or (first_1_found and digits_after_first_1 < (ieee_format.mantissa_length + 1)):
+            if i < len(remainder_after_whole_part):
+                bit = remainder_after_whole_part[i]
+            else:
+                bit = "0"
             remainder_bin += bit
-            ic(bit, remainder_bin, denominator_bin, whole_part_bin)
-            padded_remainder, padded_denominator = BinaryOperations.left_zero_pad_shorter_bin(
+            ic(bit, remainder_bin, denominator_bin)
+            padded_current_remainder, padded_denominator = BinaryOperations.left_zero_pad_shorter_bin(
                 remainder_bin, denominator_bin
             )
             
-            if padded_remainder >= padded_denominator:
+            if padded_current_remainder >= padded_denominator:
             
                 #remainder_bin, denominator_bin = (
                 #    BinaryOperations.left_zero_pad_shorter_bin(
@@ -236,17 +231,24 @@ class BinaryOperations:
                 #)
                 ic(remainder_bin, padded_denominator)
                 remainder_bin = BinaryOperations.subtract_binaries(
-                    padded_remainder, padded_denominator
+                    padded_current_remainder, padded_denominator
                 )
                 print()
                 print("after subtraction")
-                whole_part_bin += "1"
-                ic(remainder_bin, padded_denominator, whole_part_bin)
+                fractional_part_bin += "1"
+                ic(remainder_bin, padded_denominator, fractional_part_bin)
                 print()
+                if not first_1_found:
+                    first_1_found = True
+                else:
+                    digits_after_first_1 += 1
             else:
-                whole_part_bin += "0"
-        print(len(fractional_part_bin))
-
+                fractional_part_bin += "0"
+                if first_1_found:
+                    digits_after_first_1 += 1
+            i += 1
+        ic(fractional_part_bin, padded_current_remainder, padded_denominator, first_1_found)
+        print(f"the IEEE length of mantissa is {ieee_format.mantissa_length}, while the actual length is {len(fractional_part_bin)}")
         return fractional_part_bin
     #def round_binary_fraction_part(fractional_part_bin: str, ieee_format: IEEEFormat):
     #    """"""
