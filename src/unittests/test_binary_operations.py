@@ -166,7 +166,7 @@ class TestBinaryOperations(unittest.TestCase):
         )
         self.assertIsInstance(fraction_part, str)
         # Include more assertions as needed to validate the fraction_part and is_rounded
-        
+
     def test_normalise_binary_fraction(self):
         normalised_fraction, left_shift, was_normalised = (
             BinaryOperations.normalise_binary_fraction(
