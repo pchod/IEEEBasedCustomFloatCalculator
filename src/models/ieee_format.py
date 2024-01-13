@@ -21,6 +21,7 @@ class IEEEFormat:
 
     @staticmethod
     def convert_exp_to_int(binary: str):
+        """Needs to be to changed - only strings can be used - no int() functions"""
         base = 2
         number = 0
         for i, bit in enumerate(binary[::-1]):
