@@ -33,3 +33,6 @@ unit tests and work as designed.
 The program is designed in the MVC (Model - View - Controller) approach.
 
 ## Testing
+
+Unit tests were prepared and performed on the major parts of the already implemented logic and helped finding bugs
+in the implementation.
