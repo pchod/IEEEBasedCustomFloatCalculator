@@ -221,16 +221,32 @@ class BinaryOperations:
             (
                 is_whole_part_zero
                 and len(fractional_part_bin)
-                < (ieee_format.mantissa_length + 1)
+                < (
+                    ieee_format.max_left_shifts
+                    + ieee_format.exponent_length
+                    + ieee_format.mantissa_length
+                    + 1
+                )
             )
             or (
                 not first_1_found
                 and len(fractional_part_bin)
-                < (ieee_format.mantissa_length + 1)
+                < (
+                    ieee_format.max_left_shifts
+                    + ieee_format.exponent_length
+                    + ieee_format.mantissa_length
+                    + 1
+                )
             )
             or (
                 first_1_found
-                and digits_after_first_1 < (ieee_format.mantissa_length + 1)
+                and digits_after_first_1
+                < (
+                    ieee_format.max_left_shifts
+                    + ieee_format.exponent_length
+                    + ieee_format.mantissa_length
+                    + 1
+                )
             )
         ):
             if i < len(remainder_after_whole_part):
