@@ -14,23 +14,34 @@ class IEEEFormat:
         self.total_bit_length = (
             self.SIGN_BIT_LENGTH + self.exponent_length + self.mantissa_length
         )
-        self.minimum_exp = -(self.bias) + 1
+        self.minimum_exp_value = -(self.bias) + 1
+        self.max_exp_value = 2**self.exponent_length - 1
+
         self.max_normalised_exp = "1" * (exponent_length - 1) + "0"
-        _, self.max_normalised_exp_int = IEEEFormat.convert_exp_to_int(
+        _, self.max_normalised_exp_int = self.convert_exp_to_int(
             self.max_normalised_exp
         )
+        self.max_left_shifts, self.max_right_shifts = (
+            self.calculate_possible_shifts()
+        )
 
-    @staticmethod
-    def convert_exp_to_int(binary: str):
-        """Converting exponent to integer"""
-        unbiased_exp_denary = 0
+    def calculate_possible_shifts(self):
+        """ """
+        max_left_shifts = 2**self.exponent_length - 1 - self.bias
+        max_right_shifts = -self.bias
+
+        return max_left_shifts, max_right_shifts
+
+    def convert_exp_to_int(self, binary: str):
+        """Converting binary exponent to integer. Returns umbiased and biased exp in denary."""
+        unbiased_exp_denary_value = 0
         for i, bit in enumerate(binary[::-1]):
             if bit == "1":
-                unbiased_exp_denary += IEEEFormat.BASE**i
+                unbiased_exp_denary_value += self.BASE**i
 
-        biased_exp_denary = unbiased_exp_denary + IEEEFormat.bias
+        biased_exp_denary_value = unbiased_exp_denary_value + self.bias
 
-        return unbiased_exp_denary, biased_exp_denary
+        return unbiased_exp_denary_value, biased_exp_denary_value
 
 
 class IEEE16BitFormat(IEEEFormat):
