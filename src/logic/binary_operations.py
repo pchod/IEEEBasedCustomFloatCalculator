@@ -334,14 +334,17 @@ class BinaryOperations:
         """Used for normal numbers to convert to IEEE. need to add function for checking the normalisation range
         NEED TO ADD TRY/EXCEPT FOR STRING TYPES AND CALCULATING THE EXPONENT AND MANTISSA
         """
-        actual_exponent = 0
-        calculated_exponent = 0
+
+        right_shift_flag = False
+        left_shift_flag = False
         right_shifts = 0
         left_shifts = 0
         # converting whole_part_bin into list
+
         whole_part_bin = list(whole_part_bin) if whole_part_bin else []
         if whole_part_bin:
             right_shifts = len(whole_part_bin)
+            right_shift_flag = True
             normalized_fractional_part_bin = list(fractional_part_bin)
             for digit in whole_part_bin[:-1]:
                 normalized_fractional_part_bin.insert(0, digit)
@@ -354,11 +357,23 @@ class BinaryOperations:
             left_shifts = len(fractional_part_bin) - len(
                 normalized_fractional_part_bin
             )
+            if left_shifts > 0:
+                left_shift_flag = True
 
-        pass
+        return (
+            normalized_fractional_part_bin,
+            left_shift_flag,
+            right_shift_flag,
+            left_shifts,
+            right_shifts,
+        )
 
     @staticmethod
-    def convert_from_binary_fraction_to_IEEE_float():
+    def remove_trailing_1(normalized_fractional_part_bin):
+        return normalized_fractional_part_bin[1:]
+
+    @staticmethod
+    def convert_from_normalized_binary_fraction_to_IEEE_float():
         pass
 
     @staticmethod
