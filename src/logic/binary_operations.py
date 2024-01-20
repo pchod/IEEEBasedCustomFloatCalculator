@@ -134,7 +134,18 @@ class BinaryOperations:
                 whole_part_bin += "0"
 
         return """
+    @staticmethod
 
+    def convert_int_to_binary(number: int):
+        """Converts an integer to binary using string concatenation. Returns a string"""
+        binary = ""
+        if number == 0:
+            return "0"
+        while number > 0:
+            binary = str(number % 2) + binary
+            number = number // 2
+            return binary
+    
     @staticmethod
     def convert_to_binary_fraction_whole_part(
         numerator_bin: str, denominator_bin: str
@@ -328,15 +339,11 @@ class BinaryOperations:
     def normalise_binary_fraction(
         whole_part_bin: str,
         fractional_part_bin: str,
-        ieee_format: IEEEFormat,
-        to_normalise: bool,
     ):
         """Used for normal numbers to convert to IEEE. need to add function for checking the normalisation range
         NEED TO ADD TRY/EXCEPT FOR STRING TYPES AND CALCULATING THE EXPONENT AND MANTISSA
         """
 
-        right_shift_flag = False
-        left_shift_flag = False
         right_shifts = 0
         left_shifts = 0
         # converting whole_part_bin into list
@@ -344,33 +351,69 @@ class BinaryOperations:
         whole_part_bin = list(whole_part_bin) if whole_part_bin else []
         if whole_part_bin:
             right_shifts = len(whole_part_bin)
-            right_shift_flag = True
             normalized_fractional_part_bin = list(fractional_part_bin)
             for digit in whole_part_bin[:-1]:
                 normalized_fractional_part_bin.insert(0, digit)
             normalized_fractional_part_bin = "".join(
                 normalized_fractional_part_bin
             )
-
+        elif not whole_part_bin and set(fractional_part_bin) == {"0"}:
+            normalized_fractional_part_bin = fractional_part_bin
+            right_shifts = 0
         else:
             normalized_fractional_part_bin = fractional_part_bin.lstrip(0)
             left_shifts = len(fractional_part_bin) - len(
                 normalized_fractional_part_bin
             )
-            if left_shifts > 0:
-                left_shift_flag = True
 
-        return (
-            normalized_fractional_part_bin,
-            left_shift_flag,
-            right_shift_flag,
-            left_shifts,
-            right_shifts,
-        )
+        return normalized_fractional_part_bin, left_shifts, right_shifts
 
     @staticmethod
     def remove_trailing_1(normalized_fractional_part_bin):
-        return normalized_fractional_part_bin[1:]
+        return normalized_fractional_part_bin[1:] if normalized_fractional_part_bin[0] == "1" else normalized_fractional_part_bin
+    
+    @staticmethod
+    def calculate_normalized_exponent_int(left_shifts, right_shifts, ieee_format):
+        return ieee_format.exponent_bias + right_shifts if right_shifts > 0 else ieee_format.exponent_bias - left_shifts
+    
+    @staticmethod
+    def calculate_bin_exponent(exponent_int, ieee_format):
+        if exponent_int == 0:
+            return "0" * ieee_format.exponent_length
+        elif exponent_int < 0:
+            raise ValueError("The exponent cannot be negative")
+        else:
+            calculated_bin_exponent = BinaryOperations.convert_int_to_binary(exponent_int)
+            if len(calculated_bin_exponent) < ieee_format.exponent_length:
+                calculated_bin_exponent = "0" * (ieee_format.exponent_length - len(calculated_bin_exponent)) + calculated_bin_exponent
+                return calculated_bin_exponent
+            
+    def need_to_round(normalized_fractional_part_bin, ieee_format):
+        """Checks if the normalized fractional part needs to be rounded. The normalized fractional part has to be passed without the leading 1"""
+        if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
+            return False
+        elif normalized_fractional_part_bin[ieee_format.mantissa_length + 1] == "1":
+            return True
+        else:   
+            return False
+        
+    def round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format):
+        """Rounds the normalized fractional part. The normalized fractional part has to be passed without the leading 1"""
+        if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
+            return normalized_fractional_part_bin
+        
+
+
+    @staticmethod
+    def calculate_IEEE_float(is_positive: bool, calculated_bin_exponent: str, normalized_fractional_part: str, ieee_format: IEEEFormat):
+        sign_bit = "0" if is_positive else "1"
+        normalized_fractional_part = remove_trailing_1(normalized_fractional_part)
+        
+        exponent = convert_int_to_binary(exponent)
+
+        
+        
+        return (sign_bit, exponent, mantissa)
 
     @staticmethod
     def convert_from_normalized_binary_fraction_to_IEEE_float():
