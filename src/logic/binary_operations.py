@@ -318,8 +318,11 @@ class BinaryOperations:
         whole_part_bin: str, fractional_part_bin: str, ieee_format: IEEEFormat
     ):
         """Needs to add the parameter and conditions for subnormal numbers and special cases."""
-
-        pass
+        whole_part_bin = whole_part_bin.lstrip("0")
+        if not whole_part_bin and fractional_part_bin[0] == "1":
+            return False
+        else:
+            return True
 
     @staticmethod
     def normalise_binary_fraction(
@@ -328,30 +331,31 @@ class BinaryOperations:
         ieee_format: IEEEFormat,
         to_normalise: bool,
     ):
-        """Used for normal numbers to convert to IEEE. need to add function for checking the normalisation range"""
+        """Used for normal numbers to convert to IEEE. need to add function for checking the normalisation range
+        NEED TO ADD TRY/EXCEPT FOR STRING TYPES AND CALCULATING THE EXPONENT AND MANTISSA
+        """
         actual_exponent = 0
         calculated_exponent = 0
-        normalised_fraction = ""
-        # normalisation_range to add - range of numbers that can be represented as exponent in the IEEE format
-
-        # removing leading irrelevant zeros from the whole part binary
-        whole_part_bin = whole_part_bin.lstrip("0")
-
-        # condition check to perform the right shift (if the whole part is not)
-        # XOR the left shift - if the whole part is 0.
+        right_shifts = 0
+        left_shifts = 0
+        # converting whole_part_bin into list
+        whole_part_bin = list(whole_part_bin) if whole_part_bin else []
         if whole_part_bin:
-            normalised_fraction = whole_part_bin + fractional_part_bin
-            actual_exponent = len(whole_part_bin)
-            # necessary to add rounding to IEEE format after the right shift
-        else:
-            normalised_fraction = fractional_part_bin.lstrip("0")
-            actual_exponent = len(fractional_part_bin) - len(
-                normalised_fraction
+            right_shifts = len(whole_part_bin)
+            normalized_fractional_part_bin = list(fractional_part_bin)
+            for digit in whole_part_bin[:-1]:
+                normalized_fractional_part_bin.insert(0, digit)
+            normalized_fractional_part_bin = "".join(
+                normalized_fractional_part_bin
             )
 
-        # add the
+        else:
+            normalized_fractional_part_bin = fractional_part_bin.lstrip(0)
+            left_shifts = len(fractional_part_bin) - len(
+                normalized_fractional_part_bin
+            )
 
-        return normalised_fraction, actual_exponent, calculated_exponent
+        pass
 
     @staticmethod
     def convert_from_binary_fraction_to_IEEE_float():
