@@ -4,6 +4,7 @@
 class IEEEFormat:
     """Class representing the custom format for the IEEE binary conversion"""
 
+    BASE = 2
     SIGN_BIT_LENGTH = 1
 
     def __init__(self, exponent_length: int, mantissa_length: int):
@@ -13,20 +14,23 @@ class IEEEFormat:
         self.total_bit_length = (
             self.SIGN_BIT_LENGTH + self.exponent_length + self.mantissa_length
         )
-        self.minimum_exp = 2 ** (1 - self.bias)
+        self.minimum_exp = -(self.bias) + 1
         self.max_normalised_exp = "1" * (exponent_length - 1) + "0"
-        self.max_normalised_exp_int = IEEEFormat.convert_exp_to_int(
+        _, self.max_normalised_exp_int = IEEEFormat.convert_exp_to_int(
             self.max_normalised_exp
         )
 
     @staticmethod
     def convert_exp_to_int(binary: str):
-        """Needs to be to changed - only strings can be used - no int() functions"""
-        base = 2
-        number = 0
+        """Converting exponent to integer"""
+        unbiased_exp_denary = 0
         for i, bit in enumerate(binary[::-1]):
-            number += int(bit) * (base**i)
-        return number
+            if bit == "1":
+                unbiased_exp_denary += IEEEFormat.BASE**i
+
+        biased_exp_denary = unbiased_exp_denary + IEEEFormat.bias
+
+        return unbiased_exp_denary, biased_exp_denary
 
 
 class IEEE16BitFormat(IEEEFormat):
