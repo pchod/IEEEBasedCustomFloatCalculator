@@ -212,6 +212,8 @@ class BinaryOperations:
         is_whole_part_zero: bool,
         ieee_format: IEEEFormat,
     ):
+        """The length of the fractional part has to include rounding bit, sticky bit and infinite case. NEED WORK. NEEDS TO ADD FUNCTION
+        IS POWER OF 2 to check the infinite cases."""
         ic(
             remainder_after_whole_part,
             denominator_bin,
@@ -273,11 +275,6 @@ class BinaryOperations:
             )
 
             if padded_current_remainder >= padded_denominator:
-                # remainder_bin, denominator_bin = (
-                #    BinaryOperations.left_zero_pad_shorter_bin(
-                #        remainder_bin, denominator_part
-                #    )
-                # )
                 ic(remainder_bin, padded_denominator)
                 remainder_bin = BinaryOperations.subtract_binaries(
                     padded_current_remainder, padded_denominator
@@ -398,18 +395,31 @@ class BinaryOperations:
             return False
         
     def round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format):
-        """Rounds the normalized fractional part. The normalized fractional part has to be passed without the leading 1"""
+        """Rounding the normalized fractional part. It is assumed that the normalized fractional part is passed without the leading 1.
+        The function returns the rounded normalized fractional part. The logic of calculating the length of the mantissa in the binary
+        division is not implemented yet. The function is not used in the current version of the code. NEEDS WORK AND ROUNDING RULES"""
+        """
+        # if the length of normalized fractional part is less than mantissa length for the IEEE format, no rounding is necessary
         if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
             return normalized_fractional_part_bin
         
+        # checking if rounding bit and MSB are both 0 - no rounding needed
+        elif normalized_fractional_part_bin[ieee_format.mantissa_length] == "0" and normalized_fractional_part_bin[ieee_format.mantissa_length - 1] == "0":
+            normalized_fractional_part_bin = normalized_fractional_part_bin[:ieee_format.mantissa_length]
+            return normalized_fractional_part_bin
+        
 
-
+        else:
+            return normalized_fractional_part_bin[:ieee_format.mantissa_length]
+        
+        """
+        pass
     @staticmethod
     def calculate_IEEE_float(is_positive: bool, calculated_bin_exponent: str, normalized_fractional_part: str, ieee_format: IEEEFormat):
         sign_bit = "0" if is_positive else "1"
         normalized_fractional_part = remove_trailing_1(normalized_fractional_part)
         
-        exponent = convert_int_to_binary(exponent)
+        exponent = BinaryOperations.convert_int_to_binary(exponent)
 
         
         
