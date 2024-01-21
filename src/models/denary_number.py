@@ -44,13 +44,13 @@ class DenaryNumber:
         denominator //= gcd
         return numerator, denominator
     
-    def is_den_power_of_2(self):
+    def is_den_power_of_2(self, simplified_denominator):
         """Using bitwise operation to determine if the denominator is a power of 2. Needed for sticky bit calculation in rounding process
         while converting to binary fraction and IEEE 754 format"""
-        if self.denominator == 0:
+        if self.simplified_denominator == 0:
             raise ZeroDivisionError("The denominator cannot be 0")
         
-        return True if self.denominator & (self.denominator - 1) == 0 else False
+        return True if self.simplified_denominator & (self.simplified_denominator - 1) == 0 else False
 
 
 class FractionalNumber(DenaryNumber):

@@ -353,6 +353,7 @@ class BinaryOperations:
 
     @staticmethod
     def remove_leading_1(normalized_fractional_part_bin):
+        print("debug: normalized fractional part 2 first digits before removing leading 1", normalized_fractional_part_bin[0:1])
         return normalized_fractional_part_bin[1:] if normalized_fractional_part_bin[0] == "1" else normalized_fractional_part_bin
     
     @staticmethod
@@ -377,19 +378,30 @@ class BinaryOperations:
             elif len(calculated_bin_exponent) == ieee_format.exponent_length:
                 return calculated_bin_exponent
     @staticmethod   
-    def need_to_round(normalized_fractional_part_bin, ieee_format: IEEEFormat):
-        """Checks if the normalized fractional part needs to be rounded. The normalized fractional part has to be passed without the leading 1"""
+    def need_to_round(normalized_fractional_part_bin, ieee_format: IEEEFormat, den_is_power_of_2: bool):
+        """Checks if the normalized fractional part needs to be rounded. The normalized fractional part has to be passed without the leading 1.
+        The rule for rounding is round do nearest, tie to even. The function returns True if the rounding is needed and False if not."""
+
         print("debug: first digit of the normalized fractional part", normalized_fractional_part_bin[0])
         if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
             return False
-        
-        # if LSB is 0 no rounding is needed
-        if normalized_fractional_part_bin[ieee_format.mantissa_length - 1] == "0":
+        normalized_fractional_part_bin = list(normalized_fractional_part_bin)
+        lsb, guard_bit = normalized_fractional_part_bin[ieee_format.mantissa_length - 1], normalized_fractional_part_bin[ieee_format.mantissa_length]
+        rounding_bit = normalized_fractional_part_bin[ieee_format.mantissa_length + 1]
+        sticky_bit = "1" if not den_is_power_of_2 else "0"
+        # no rounding needed for LSB = 1
+        if lsb == "1":
             return False
         
-        # if LSB is 1 the rounding is needed, it will be performed in the next method
-        elif normalized_fractional_part_bin[ieee_format.mantissa_length - 1] == "1":
-            return True
+        # if LSB is 0 no rounding is needed
+        if lsb == "0":
+            if guard_bit and rounding_bit and sticky_bit == "0":
+                return False
+            elif guard_bit == "1":
+                return True
+            elif guard_bit == "0" and (rounding_bit or sticky_bit) == "1":
+                return True
+        
     @staticmethod
     def round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format: IEEEFormat, den_is_power_of_2: bool):
         """Rounding the normalized fractional part. It is assumed that the normalized fractional part is passed without the leading 1.
@@ -428,6 +440,7 @@ class BinaryOperations:
 
     @staticmethod
     def convert_denary_fraction_to_IEEE_float_normal_num(simplified_numerator: int, simplified_denominator: int, ieee_format: IEEEFormat, den_is_power_of_2: bool, is_positive: bool):
+        """Working on seperate arguments instead of class objects - need to change, when the functions work properly"""
         numerator_bin, denominator_bin = BinaryOperations.convert_int_to_binary(simplified_numerator), BinaryOperations.convert_int_to_binary(simplified_denominator)
         print(f"execution suite: {simplified_numerator}: {numerator_bin}, {simplified_denominator}: {denominator_bin}")
         whole_part_bin, remainder_after_whole_part = BinaryOperations.convert_to_binary_fraction_whole_part(numerator_bin, denominator_bin)
@@ -437,7 +450,9 @@ class BinaryOperations:
         normalized_fractional_part_bin = BinaryOperations.remove_leading_1(normalized_fractional_part_bin)
         exponent_int = BinaryOperations.calculate_normalized_exponent_int(left_shifts, right_shifts, ieee_format)
         print(f"print statement inside the code execution suite {exponent_int}")
-        need_to_round = BinaryOperations.need_to_round(normalized_fractional_part_bin, ieee_format)
+        den_is_power_of_2 = DenaryNumber.is_den_power_of_2(simplified_denominator)
+        print(f"Is denominator power of 2: {den_is_power_of_2}")
+        need_to_round = BinaryOperations.need_to_round(normalized_fractional_part_bin, ieee_format, den_is_power_of_2)
         if need_to_round:
             normalized_fractional_part_bin = BinaryOperations.round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format, den_is_power_of_2)
         sign_bit, exponent, mantissa = BinaryOperations.calculate_IEEE_float(is_positive, exponent_int, normalized_fractional_part_bin, ieee_format)
