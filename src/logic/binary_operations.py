@@ -199,6 +199,14 @@ class BinaryOperations:
         i = 0
         digits_after_first_1 = 0
         first_1_found = not is_whole_part_zero
+        # 3 conditions for the while loop:
+        # 1. if the whole part is zero, the division is performed until the length of the fractional part is equal to the sum of
+        # exponent length, mantissa length and 3 bits for handling stripped leading 1, guard bit and rounding bit
+        # 2. if the whole part is not zero, the division is performed until the length of the fractional part is equal to the sum of
+        # exponent length, mantissa length and 3 bits for handling stripped leading 1, guard bit and rounding bit
+        # 3. if the whole part is not zero and the first 1 is found, the division is performed until the length of the fractional part after
+        # the first 1 is found is equal to the sum of exponent length, mantissa length and 3 bits for handling stripped leading 1, guard bit and rounding bit
+        # inner break condition: if the remainder is 0, the division is completed and ended
         while (
             (
                 is_whole_part_zero
@@ -206,28 +214,27 @@ class BinaryOperations:
                 < (
                     ieee_format.exponent_length
                     + ieee_format.mantissa_length
-                    + 2
+                    + 3
                 )
             )
             or (
-                not first_1_found
+                not is_whole_part_zero
                 and len(fractional_part_bin)
                 < (
                     ieee_format.max_left_shifts
                     + ieee_format.exponent_length
                     + ieee_format.mantissa_length
-                    + 2
+                    + 3
                 )
             )
             or (
                 first_1_found
-                and digits_after_first_1
+                and (digits_after_first_1
                 < (
-                    ieee_format.max_left_shifts
-                    + ieee_format.exponent_length
+                    ieee_format.exponent_length
                     + ieee_format.mantissa_length
-                    + 2
-                )
+                    + 3
+                ))
             )
         ):
             if i < len(remainder_after_whole_part):
@@ -261,18 +268,22 @@ class BinaryOperations:
                     digits_after_first_1 += 1
             else:
                 fractional_part_bin += "0"
-                if first_1_found:
-                    digits_after_first_1 += 1
+            if first_1_found:
+                digits_after_first_1 += 1
             i += 1
         ic(
             fractional_part_bin,
             padded_current_remainder,
             padded_denominator,
             first_1_found,
+            ieee_format.mantissa_length,
+            ieee_format.exponent_length,
         )
         print(
             f"the IEEE length of mantissa is {ieee_format.mantissa_length},"
-            f" while the actual length is {len(fractional_part_bin)}"
+            f" while the actual length is {len(fractional_part_bin)}\n"
+            f"The length of the fractional part after the first 1 is {digits_after_first_1}\n"
+            f"the combined length of the exponent and mantissa is {ieee_format.exponent_length + ieee_format.mantissa_length}"
         )
         return fractional_part_bin, complete_division
 
@@ -429,7 +440,7 @@ class BinaryOperations:
         if need_to_round:
             normalized_fractional_part_bin = BinaryOperations.round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format, den_is_power_of_2)
         sign_bit, exponent, mantissa = BinaryOperations.calculate_IEEE_float(is_positive, exponent_int, normalized_fractional_part_bin, ieee_format)
-        print(f"Length of sign bit: {len(sign_bit)}, length of exponent: {len(exponent)}, length of mantissa: {len(mantissa)}")
+        print(f"Length of sign bit: {len(sign_bit)}, length of exponent: {len(exponent)}, length of mantissa: {len(mantissa)}. Was the number rounded? {need_to_round}")
         return (sign_bit, exponent, mantissa)
 
     @staticmethod
