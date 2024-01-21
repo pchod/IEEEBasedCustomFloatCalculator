@@ -379,6 +379,7 @@ class BinaryOperations:
     @staticmethod   
     def need_to_round(normalized_fractional_part_bin, ieee_format: IEEEFormat):
         """Checks if the normalized fractional part needs to be rounded. The normalized fractional part has to be passed without the leading 1"""
+        print("debug: first digit of the normalized fractional part", normalized_fractional_part_bin[0])
         if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
             return False
         
