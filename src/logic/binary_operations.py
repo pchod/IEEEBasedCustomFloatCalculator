@@ -101,41 +101,7 @@ class BinaryOperations:
         # ic(subtraction_product_bin)
         return subtraction_product_bin
 
-    """@staticmethod
-    def perform_long_division(numerator_bin: str, denominator_bin: str, precision: None):
-        Implementation of a long division for binaries. Returns the whole part and the remainder. Serves as a helper
-        function for binary whole part and fractional part conversion
-        
-        division_product = ""
-        for i, bit in enumerate(numerator_bin):
-            remainder_bin += bit
-            ic(bit, remainder_bin, denominator_bin, whole_part_bin)
-            padded_remainder, padded_denominator = BinaryOperations.left_zero_pad_shorter_bin(
-                remainder_bin, denominator_bin
-            )
-            
-            if padded_remainder >= padded_denominator:
-            
-                #remainder_bin, denominator_bin = (
-                #    BinaryOperations.left_zero_pad_shorter_bin(
-                #        remainder_bin, denominator_part
-                #    )
-                #)
-                ic(remainder_bin, padded_denominator)
-                remainder_bin = BinaryOperations.subtract_binaries(
-                    padded_remainder, padded_denominator
-                )
-                print()
-                print("after subtraction")
-                whole_part_bin += "1"
-                ic(remainder_bin, padded_denominator, whole_part_bin)
-                print()
-            else:
-                whole_part_bin += "0"
-
-        return """
     @staticmethod
-
     def convert_int_to_binary(number: int):
         """Converts an integer to binary using string concatenation. Returns a string"""
         binary = ""
@@ -227,6 +193,7 @@ class BinaryOperations:
         padded_denominator = ""
         denominator_bin = denominator_bin.lstrip("0")
         fractional_part_bin = ""
+        complete_division = False
         i = 0
         digits_after_first_1 = 0
         first_1_found = not is_whole_part_zero
@@ -238,7 +205,7 @@ class BinaryOperations:
                     ieee_format.max_left_shifts
                     + ieee_format.exponent_length
                     + ieee_format.mantissa_length
-                    + 1
+                    + 2
                 )
             )
             or (
@@ -248,7 +215,7 @@ class BinaryOperations:
                     ieee_format.max_left_shifts
                     + ieee_format.exponent_length
                     + ieee_format.mantissa_length
-                    + 1
+                    + 2
                 )
             )
             or (
@@ -258,7 +225,7 @@ class BinaryOperations:
                     ieee_format.max_left_shifts
                     + ieee_format.exponent_length
                     + ieee_format.mantissa_length
-                    + 1
+                    + 2
                 )
             )
         ):
@@ -273,6 +240,9 @@ class BinaryOperations:
                     remainder_bin, denominator_bin
                 )
             )
+            if set(padded_current_remainder) == {"0"}:
+                complete_division = True
+                break
 
             if padded_current_remainder >= padded_denominator:
                 ic(remainder_bin, padded_denominator)
@@ -303,7 +273,7 @@ class BinaryOperations:
             f"the IEEE length of mantissa is {ieee_format.mantissa_length},"
             f" while the actual length is {len(fractional_part_bin)}"
         )
-        return fractional_part_bin
+        return fractional_part_bin, complete_division
 
     # def round_binary_fraction_part(fractional_part_bin: str, ieee_format: IEEEFormat):
     #    """"""
