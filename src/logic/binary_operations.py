@@ -5,6 +5,7 @@ from pprint import pprint
 from icecream import ic
 
 from models.ieee_format import IEEEFormat
+from models.denary_number import DenaryNumber
 
 
 class BinaryOperations:
@@ -61,40 +62,41 @@ class BinaryOperations:
         # ic(binary_1, binary_2)
         subtraction_product = []
         borrow = False
-
+        print("state before subtraction, checking remaining borrow based on the previous iteration")
+        ic(binary_1, binary_2, borrow)
         # performing subtraction from right to left
         for index in range((len(binary_1) - 1), -1, -1):
             # ic(subtraction_product)
             bit_binary_1 = binary_1[index]
             bit_binary_2 = binary_2[index]
-            # print()
-            # print("state before subtraction, checking remaining borrow based on the previous iteration")
-            # ic(bit_binary_1, bit_binary_2, borrow)
-            # print()
-            # print("state after checking borrow")
-            # ic(bit_binary_1, bit_binary_2, borrow)
-            # print()
-            # print("starting subtraction")
-            # ic(bit_binary_1, bit_binary_2, borrow)
-            # checked and correct
-            if bit_binary_1 < bit_binary_2:
-                # print("bit 1 is lower than bit 2")
-                borrow = True
-                # ic(borrow)
+            print()
 
-                subtraction_product.append("1")
-
-            elif bit_binary_1 > bit_binary_2:
-                subtraction_product.append("0" if borrow else "1")
-                # print("bit 1 is higher than bit 2")
-                if borrow:
+            print()
+            print("starting subtraction")
+            print(bit_binary_1, bit_binary_2, borrow, subtraction_product)
+            if borrow:
+                # if the previous subtraction required a borrow, the current bit is borrowed
+                if bit_binary_1 == "1" and bit_binary_2 == "0":
+                    bit_binary_1 = "0"
+                    # resolving the borrow
                     borrow = False
-
+                else:
+                    bit_binary_1 = "1"
+                    # still need to borrow for the next iterated bit
+                    borrow = True
+                
+            if bit_binary_1 == bit_binary_2:
+                    # if the bits are equal, the product is 0
+                subtraction_product.append("0")
+            elif bit_binary_1 > bit_binary_2:
+                    # if the bit from binary_1 is greater, the product is 1
+                subtraction_product.append("1")
             else:
+                # if the bit from binary_2 is greater, the product is 1
+                subtraction_product.append("1")
+                borrow = True
                 # for equal bits the product is 0, if the bit is borrowed, be become 1
                 # print("bit 1 is equal to bit 2")
-                subtraction_product.append("1" if borrow else "0")
-                borrow = (bit_binary_1 == "0") and borrow
         # ic(subtraction_product)
         subtraction_product_reversed = reversed(subtraction_product)
         subtraction_product_bin = "".join(subtraction_product_reversed)
@@ -110,7 +112,7 @@ class BinaryOperations:
         while number > 0:
             binary = str(number % 2) + binary
             number = number // 2
-            return binary
+        return binary
     
     @staticmethod
     def convert_to_binary_fraction_whole_part(
@@ -186,8 +188,8 @@ class BinaryOperations:
             is_whole_part_zero,
             ieee_format.mantissa_length,
         )
-        if not remainder_after_whole_part or remainder_after_whole_part == "0":
-            return "0"
+        if not remainder_after_whole_part or set(remainder_after_whole_part) == {"0"}:
+            return "0", True
         remainder_bin = ""
         padded_current_remainder = ""
         padded_denominator = ""
@@ -202,8 +204,7 @@ class BinaryOperations:
                 is_whole_part_zero
                 and len(fractional_part_bin)
                 < (
-                    ieee_format.max_left_shifts
-                    + ieee_format.exponent_length
+                    ieee_format.exponent_length
                     + ieee_format.mantissa_length
                     + 2
                 )
@@ -299,6 +300,10 @@ class BinaryOperations:
         whole_part_bin = whole_part_bin.lstrip("0")
         if not whole_part_bin and fractional_part_bin[0] == "1":
             return False
+        
+        elif whole_part_bin and len(whole_part_bin) == 1:
+            return False
+        
         else:
             return True
 
@@ -314,12 +319,12 @@ class BinaryOperations:
         right_shifts = 0
         left_shifts = 0
         # converting whole_part_bin into list
-
+        whole_part_bin = whole_part_bin.lstrip("0")
         whole_part_bin = list(whole_part_bin) if whole_part_bin else []
         if whole_part_bin:
-            right_shifts = len(whole_part_bin)
+            right_shifts = len(whole_part_bin) - 1
             normalized_fractional_part_bin = list(fractional_part_bin)
-            for digit in whole_part_bin[:-1]:
+            for digit in whole_part_bin[:-1:1]:
                 normalized_fractional_part_bin.insert(0, digit)
             normalized_fractional_part_bin = "".join(
                 normalized_fractional_part_bin
@@ -328,7 +333,7 @@ class BinaryOperations:
             normalized_fractional_part_bin = fractional_part_bin
             right_shifts = 0
         else:
-            normalized_fractional_part_bin = fractional_part_bin.lstrip(0)
+            normalized_fractional_part_bin = fractional_part_bin.lstrip("0")
             left_shifts = len(fractional_part_bin) - len(
                 normalized_fractional_part_bin
             )
@@ -336,68 +341,96 @@ class BinaryOperations:
         return normalized_fractional_part_bin, left_shifts, right_shifts
 
     @staticmethod
-    def remove_trailing_1(normalized_fractional_part_bin):
+    def remove_leading_1(normalized_fractional_part_bin):
         return normalized_fractional_part_bin[1:] if normalized_fractional_part_bin[0] == "1" else normalized_fractional_part_bin
     
     @staticmethod
     def calculate_normalized_exponent_int(left_shifts, right_shifts, ieee_format):
-        return ieee_format.exponent_bias + right_shifts if right_shifts > 0 else ieee_format.exponent_bias - left_shifts
+        return ieee_format.bias + right_shifts if right_shifts > 0 else ieee_format.bias - left_shifts
     
     @staticmethod
-    def calculate_bin_exponent(exponent_int, ieee_format):
+    def calculate_bin_exponent(exponent_int: int, ieee_format):
+        print(f"print statement inside the function calculate_bin_exponent {exponent_int}")
         if exponent_int == 0:
+            print("exponent is 0")
             return "0" * ieee_format.exponent_length
         elif exponent_int < 0:
+            print("exponent is negative")
             raise ValueError("The exponent cannot be negative")
         else:
             calculated_bin_exponent = BinaryOperations.convert_int_to_binary(exponent_int)
+            print(calculated_bin_exponent)
             if len(calculated_bin_exponent) < ieee_format.exponent_length:
                 calculated_bin_exponent = "0" * (ieee_format.exponent_length - len(calculated_bin_exponent)) + calculated_bin_exponent
                 return calculated_bin_exponent
-            
-    def need_to_round(normalized_fractional_part_bin, ieee_format):
+            elif len(calculated_bin_exponent) == ieee_format.exponent_length:
+                return calculated_bin_exponent
+    @staticmethod   
+    def need_to_round(normalized_fractional_part_bin, ieee_format: IEEEFormat):
         """Checks if the normalized fractional part needs to be rounded. The normalized fractional part has to be passed without the leading 1"""
         if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
             return False
-        elif normalized_fractional_part_bin[ieee_format.mantissa_length + 1] == "1":
-            return True
-        else:   
+        
+        # if LSB is 0 no rounding is needed
+        if normalized_fractional_part_bin[ieee_format.mantissa_length - 1] == "0":
             return False
         
-    def round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format):
-        """Rounding the normalized fractional part. It is assumed that the normalized fractional part is passed without the leading 1.
-        The function returns the rounded normalized fractional part. The logic of calculating the length of the mantissa in the binary
-        division is not implemented yet. The function is not used in the current version of the code. NEEDS WORK AND ROUNDING RULES"""
-        """
-        # if the length of normalized fractional part is less than mantissa length for the IEEE format, no rounding is necessary
-        if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
-            return normalized_fractional_part_bin
-        
-        # checking if rounding bit and MSB are both 0 - no rounding needed
-        elif normalized_fractional_part_bin[ieee_format.mantissa_length] == "0" and normalized_fractional_part_bin[ieee_format.mantissa_length - 1] == "0":
-            normalized_fractional_part_bin = normalized_fractional_part_bin[:ieee_format.mantissa_length]
-            return normalized_fractional_part_bin
-        
-
-        else:
-            return normalized_fractional_part_bin[:ieee_format.mantissa_length]
-        
-        """
-        pass
+        # if LSB is 1 the rounding is needed, it will be performed in the next method
+        elif normalized_fractional_part_bin[ieee_format.mantissa_length - 1] == "1":
+            return True
     @staticmethod
-    def calculate_IEEE_float(is_positive: bool, calculated_bin_exponent: str, normalized_fractional_part: str, ieee_format: IEEEFormat):
-        sign_bit = "0" if is_positive else "1"
-        normalized_fractional_part = remove_trailing_1(normalized_fractional_part)
-        
-        exponent = BinaryOperations.convert_int_to_binary(exponent)
+    def round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format: IEEEFormat, den_is_power_of_2: bool):
+        """Rounding the normalized fractional part. It is assumed that the normalized fractional part is passed without the leading 1.
+        The function returns the rounded normalized fractional part. It's assumed, that LSB is 1 (based on the need_to_round function).
+        The rounding is performed based on the LSB, guard bit, rounding bit and sticky bit."""
+        normalized_fractional_part_bin = list(normalized_fractional_part_bin)
+        lsb, guard_bit, rounding_bit = normalized_fractional_part_bin[ieee_format.mantissa_length - 1], normalized_fractional_part_bin[ieee_format.mantissa_length], normalized_fractional_part_bin[ieee_format.mantissa_length + 1]
+        sticky_bit = "1" if not den_is_power_of_2 else "0"
+        if guard_bit == "0" and rounding_bit == "0":
+            lsb = "0"
+        elif guard_bit == "0" and rounding_bit == "1":
+            lsb = "1"
+        elif guard_bit == "1" and rounding_bit == "0":
+            lsb = "0"
+        elif guard_bit == "1" and rounding_bit == "1":
+            if sticky_bit == "1":
+                lsb = "1"
+            else:
+                lsb = "0"
+        normalized_fractional_part_bin[ieee_format.mantissa_length - 1] = lsb
+        return "".join(normalized_fractional_part_bin)
+            
 
-        
+    @staticmethod
+    def calculate_IEEE_float(is_positive: bool, exponent: int, normalized_fractional_part: str, ieee_format: IEEEFormat):
+        """Needs to the parameter of normalized fractional part without the leading 1 and rounded, if it was needed"""
+        sign_bit = "0" if is_positive else "1"
+        exponent = BinaryOperations.calculate_bin_exponent(exponent, ieee_format)
+        if len(normalized_fractional_part) < ieee_format.mantissa_length:
+            normalized_fractional_part = BinaryOperations.right_zero_pad(normalized_fractional_part, ieee_format)
+        elif len(normalized_fractional_part) > ieee_format.mantissa_length:
+            normalized_fractional_part = normalized_fractional_part[:ieee_format.mantissa_length]
+        mantissa = normalized_fractional_part
         
         return (sign_bit, exponent, mantissa)
 
     @staticmethod
-    def convert_from_normalized_binary_fraction_to_IEEE_float():
-        pass
+    def convert_denary_fraction_to_IEEE_float_normal_num(simplified_numerator: int, simplified_denominator: int, ieee_format: IEEEFormat, den_is_power_of_2: bool, is_positive: bool):
+        numerator_bin, denominator_bin = BinaryOperations.convert_int_to_binary(simplified_numerator), BinaryOperations.convert_int_to_binary(simplified_denominator)
+        print(f"execution suite: {simplified_numerator}: {numerator_bin}, {simplified_denominator}: {denominator_bin}")
+        whole_part_bin, remainder_after_whole_part = BinaryOperations.convert_to_binary_fraction_whole_part(numerator_bin, denominator_bin)
+        is_whole_part_zero = BinaryOperations.is_whole_part_zero(whole_part_bin)
+        fractional_part_bin, complete_division = BinaryOperations.convert_to_binary_fraction_fraction_part(remainder_after_whole_part, denominator_bin, is_whole_part_zero, ieee_format)
+        normalized_fractional_part_bin, left_shifts, right_shifts = BinaryOperations.normalise_binary_fraction(whole_part_bin, fractional_part_bin)
+        normalized_fractional_part_bin = BinaryOperations.remove_leading_1(normalized_fractional_part_bin)
+        exponent_int = BinaryOperations.calculate_normalized_exponent_int(left_shifts, right_shifts, ieee_format)
+        print(f"print statement inside the code execution suite {exponent_int}")
+        need_to_round = BinaryOperations.need_to_round(normalized_fractional_part_bin, ieee_format)
+        if need_to_round:
+            normalized_fractional_part_bin = BinaryOperations.round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format, den_is_power_of_2)
+        sign_bit, exponent, mantissa = BinaryOperations.calculate_IEEE_float(is_positive, exponent_int, normalized_fractional_part_bin, ieee_format)
+        print(f"Length of sign bit: {len(sign_bit)}, length of exponent: {len(exponent)}, length of mantissa: {len(mantissa)}")
+        return (sign_bit, exponent, mantissa)
 
     @staticmethod
     def convert_from_IEEE_to_binary_fraction():
