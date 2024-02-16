@@ -11,12 +11,11 @@ class DenaryNumber:
         self.is_positive = None
         self.numerator = None
         self.denominator = None
-        self.simplified_numerator = None
-        self.simplified_denominator = None
+        self.simplified_numerator, self.simplified_denominator = self._simplify_fraction()
         self.int_part = None
         self.decimal_part = None
         self.decimal_from_fractional = None
-        self.den_is_power_of_2 = None
+        self.den_is_power_of_2 = self._is_den_power_of_2()
 
     def convert_to_fractional(self):
         raise NotImplementedError
@@ -27,7 +26,9 @@ class DenaryNumber:
     def convert_to_binary_fraction(self):
         raise NotImplementedError
     
-    def gcd(self, numerator, denominator):
+    def _gcd(self):
+        numerator = self.numerator
+        denominator = self.denominator
         gcd = 0
         while denominator:
             gcd = denominator
@@ -35,16 +36,18 @@ class DenaryNumber:
             numerator = gcd
         return gcd
     
-    def simplify_fraction(self, numerator, denominator):
+    def _simplify_fraction(self):
         """Using floor division to prevent getting float as a result. GCD is used to simplify the fraction"""
+        numerator = self.numerator
+        denominator = self.denominator
         if denominator == 0:
             raise ZeroDivisionError("The denominator cannot be 0")
-        gcd = self.gcd(numerator, denominator)
+        gcd = self._gcd()
         numerator //= gcd
         denominator //= gcd
         return numerator, denominator
     
-    def is_den_power_of_2(self, simplified_denominator):
+    def _is_den_power_of_2(self):
         """Using bitwise operation to determine if the denominator is a power of 2. Needed for sticky bit calculation in rounding process
         while converting to binary fraction and IEEE 754 format"""
         if self.simplified_denominator == 0:
@@ -61,8 +64,8 @@ class FractionalNumber(DenaryNumber):
         self.numerator = abs(numerator)
         assert denominator != 0, "The denominator cannot be 0"
         self.denominator = abs(denominator)
-        self.simplified_numerator, self.simplified_denominator = self.simplify_fraction(self.numerator, self.denominator)
-        self.den_is_power_of_2 = self.is_den_power_of_2()
+        self.simplified_numerator, self.simplified_denominator = self._simplify_fraction()
+        self.den_is_power_of_2 = self._is_den_power_of_2()
     # def is_den_power_of_2(self):
 
 
