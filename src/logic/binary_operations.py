@@ -22,7 +22,7 @@ class BinaryOperations:
     @staticmethod
     def check_special_cases():
         pass
-
+    
     @staticmethod
     def compare_bin_lengths(binary_1: str, binary_2: str):
         if len(binary_1) > len(binary_2):
@@ -450,7 +450,7 @@ class BinaryOperations:
         normalized_fractional_part_bin = BinaryOperations.remove_leading_1(normalized_fractional_part_bin)
         exponent_int = BinaryOperations.calculate_normalized_exponent_int(left_shifts, right_shifts, ieee_format)
         print(f"print statement inside the code execution suite {exponent_int}")
-        den_is_power_of_2 = DenaryNumber.is_den_power_of_2(simplified_denominator)
+        den_is_power_of_2 = DenaryNumber._is_den_power_of_2()
         print(f"Is denominator power of 2: {den_is_power_of_2}")
         need_to_round = BinaryOperations.need_to_round(normalized_fractional_part_bin, ieee_format, den_is_power_of_2)
         if need_to_round:
