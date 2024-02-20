@@ -9,6 +9,7 @@ from models.denary_number import DenaryNumber
 
 
 class BinaryOperations:
+    
     @staticmethod
     def check_underflow(ieee_underflow_value, number):
         """Returns a bool for underflow check. True, if the number is in the underflow range"""
