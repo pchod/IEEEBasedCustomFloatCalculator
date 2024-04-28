@@ -6,7 +6,7 @@ from models.ieee_format import IEEEFormat
 
 class DenaryNumber:
     """A parent class for representation of denary numbers"""
-    
+
     def _gcd(self, num=None, den=None):
         if num == None:
             numerator = self.numerator
@@ -22,7 +22,7 @@ class DenaryNumber:
             denominator = numerator % denominator
             numerator = gcd
         return gcd
-    
+
     def _simplify_fraction(self, num=None, den=None):
         """Using floor division to prevent getting float as a result. GCD is used to simplify the fraction"""
         if num == None:
@@ -39,7 +39,7 @@ class DenaryNumber:
         simplified_numerator //= gcd
         simplified_denominator //= gcd
         return simplified_numerator, simplified_denominator
-    
+
     def _is_den_power_of_2(self, denominator=None):
         """Using bitwise operation to determine if the denominator is a power of 2. Needed for sticky bit calculation in rounding process
         while converting to binary fraction and IEEE 754 format"""
@@ -51,6 +51,7 @@ class DenaryNumber:
             if denominator == 0:
                 raise ZeroDivisionError("The denominator cannot be 0")
             return True if denominator & (denominator - 1) == 0 else False
+
 
 class FractionalNumber(DenaryNumber):
     """ """

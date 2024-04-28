@@ -25,6 +25,7 @@ class IEEEFormat:
         self.max_left_shifts, self.max_right_shifts = (
             self._calculate_possible_shifts()
         )
+        self. min_value, self.max_value = None, None
 
     def _calculate_possible_shifts(self):
         """ """
@@ -43,6 +44,8 @@ class IEEEFormat:
         biased_exp_denary_value = unbiased_exp_denary_value + self.bias
 
         return unbiased_exp_denary_value, biased_exp_denary_value
+
+
 
 
 class IEEE16BitFormat(IEEEFormat):
