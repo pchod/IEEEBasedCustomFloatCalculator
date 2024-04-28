@@ -20,15 +20,15 @@ class TestIEEEFormat(unittest.TestCase):
         self.assertEqual(format.minimum_exp, 2 ** (1 - 15))
         self.assertEqual(
             format.max_normalised_exp_int,
-            IEEEFormat.convert_exp_to_int(format.max_normalised_exp),
+            IEEEFormat._convert_exp_to_int(format.max_normalised_exp),
         )
 
     def test_convert_exp_to_int(self):
         # Test convert_exp_to_int method
-        self.assertEqual(IEEEFormat.convert_exp_to_int("110"), 6)
-        self.assertEqual(IEEEFormat.convert_exp_to_int("0"), 0)
-        self.assertEqual(IEEEFormat.convert_exp_to_int("1"), 1)
-        self.assertEqual(IEEEFormat.convert_exp_to_int("101"), 5)
+        self.assertEqual(IEEEFormat._convert_exp_to_int("110"), 6)
+        self.assertEqual(IEEEFormat._convert_exp_to_int("0"), 0)
+        self.assertEqual(IEEEFormat._convert_exp_to_int("1"), 1)
+        self.assertEqual(IEEEFormat._convert_exp_to_int("101"), 5)
 
     def test_subclass_initialization(self):
         # Test initialization of subclasses

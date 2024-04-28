@@ -10,30 +10,31 @@ class IEEEFormat:
     def __init__(self, exponent_length: int, mantissa_length: int):
         self.exponent_length = exponent_length
         self.mantissa_length = mantissa_length
-        self.bias = 2 ** (exponent_length - 1) - 1
+        self.bias = self.BASE ** (exponent_length - 1) - 1
         self.total_bit_length = (
             self.SIGN_BIT_LENGTH + self.exponent_length + self.mantissa_length
         )
-        self.minimum_exp_value = -(self.bias) + 1
-        self.max_exp_value = 2**self.exponent_length - 1
+        self.minimum_exp_value = -self.bias + 1
+        self.max_exp_value = self.BASE ** self.exponent_length - 1
 
+        # all 1s reserved for special cases
         self.max_normalised_exp = "1" * (exponent_length - 1) + "0"
-        _, self.max_normalised_exp_int = self.convert_exp_to_int(
+        self.unbiased_exp_denary_value, self.max_normalised_exp_int = self._convert_exp_to_int(
             self.max_normalised_exp
         )
         self.max_left_shifts, self.max_right_shifts = (
-            self.calculate_possible_shifts()
+            self._calculate_possible_shifts()
         )
 
-    def calculate_possible_shifts(self):
+    def _calculate_possible_shifts(self):
         """ """
-        max_left_shifts = 2**self.exponent_length - 1 - self.bias
+        max_left_shifts = self.BASE ** self.exponent_length - 1 - self.bias
         max_right_shifts = -self.bias
 
         return max_left_shifts, max_right_shifts
 
-    def convert_exp_to_int(self, binary: str):
-        """Converting binary exponent to integer. Returns umbiased and biased exp in denary."""
+    def _convert_exp_to_int(self, binary: str):
+        """Converting binary exponent to integer. Returns unbiased and biased exp in denary."""
         unbiased_exp_denary_value = 0
         for i, bit in enumerate(binary[::-1]):
             if bit == "1":
@@ -62,7 +63,7 @@ class IEEE64BitFormat(IEEEFormat):
     """Class representing 64 bit float representation IEEE 754 (double precision), binary64"""
 
     def __init__(self):
-        super().__init__(exponent_length=13, mantissa_length=50)
+        super().__init__(exponent_length=11, mantissa_length=52)
 
 
 class IEEECustomLengthFormat(IEEEFormat):
