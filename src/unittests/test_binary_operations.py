@@ -155,17 +155,15 @@ class TestBinaryOperations(unittest.TestCase):
             ieee_format = self.ieee_format
         )
         self.assertIsInstance(fraction_part, str)
-        # Include more assertions as needed to validate the fraction_part and is_rounded
     def test_convert_to_binary_fraction_fraction_part_whole_part_non_zero(self):
         self.ieee_format = IEEE16BitFormat()
         fraction_part, is_rounded = BinaryOperations.convert_to_binary_fraction_fraction_part(
-            remainder_after_whole_part = "101",  # Example binary fraction part
-            denominator_bin = "110",  # Example binary denominator
-            is_whole_part_zero = False,  # Whole part is non-zero
+            remainder_after_whole_part = "101",
+            denominator_bin = "110",
+            is_whole_part_zero = False,
             ieee_format = self.ieee_format
         )
         self.assertIsInstance(fraction_part, str)
-        # Include more assertions as needed to validate the fraction_part and is_rounded
 
     def test_normalise_binary_fraction(self):
         normalised_fraction, left_shift, was_normalised = (
@@ -178,21 +176,15 @@ class TestBinaryOperations(unittest.TestCase):
         self.assertTrue(was_normalised)
 
     def test_convert_from_binary_fraction_to_IEEE_float(self):
-        # Add tests for this method, once implemented
         pass
 
     def test_convert_from_IEEE_to_binary_fraction(self):
-        # Add tests for this method, once implemented
         pass
 
     def test_convert_from_binary_fraction_to_denary(self):
-        # Add tests for this method, once implemented
         pass
 
 
 if __name__ == "__main__":
     unittest.main()
-# Existing code...
 
-
-# Existing code...

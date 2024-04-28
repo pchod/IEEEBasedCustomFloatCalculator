@@ -11,11 +11,11 @@ class LogicManager:
         self.instance_manager = InstanceManagement()
         self.binary_operations = BinaryOperations()
 
-    def convert_fractional_to_IEEE_float(self, numerator, denominator)
+    def convert_fractional_to_IEEE_float(self, numerator, denominator):
         pass
     """
     def convert_denary_fraction_to_IEEE_float_normal_num(self, input_data):
-        """Working on seperate arguments instead of class objects - need to change, when the functions work properly"""
+        Working on seperate arguments instead of class objects - need to change, when the functions work properly
         numerator_bin, denominator_bin = BinaryOperations.convert_int_to_binary(simplified_numerator), BinaryOperations.convert_int_to_binary(simplified_denominator)
         print(f"execution suite: {simplified_numerator}: {numerator_bin}, {simplified_denominator}: {denominator_bin}")
         whole_part_bin, remainder_after_whole_part = BinaryOperations.convert_to_binary_fraction_whole_part(numerator_bin, denominator_bin)
