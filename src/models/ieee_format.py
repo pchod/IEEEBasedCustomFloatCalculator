@@ -25,7 +25,8 @@ class IEEEFormat:
         self.min_normalised_exp = "0" * (exponent_length - 1) + "1"
         # with leading implicit 1 for normal-representation of mantissa
         self.max_mantissa_normalised_bin = "1" * mantissa_length
-        self.max_mantissa_normalised_denary = 1.0 + self._convert_bin_fraction_to_int(self.max_mantissa_normalised_bin)
+        self.max_mantissa_normalised_denary = 1.0 + self._convert_bin_fraction_to_float(
+            self.max_mantissa_normalised_bin)
         self.minimal_denary_normalised = self.BASE ** self.minimum_exp_value * self.MINIMAL_NORMALISED_MANTISSA
         self.maximal_denary_normalised = self.BASE ** self.maximum_exp_value * self.max_mantissa_normalised_denary
         self.max_left_shifts, self.max_right_shifts = (
@@ -48,7 +49,7 @@ class IEEEFormat:
 
         return int_from_bin
 
-    def _convert_bin_fraction_to_int(self, binary_fraction: str):
+    def _convert_bin_fraction_to_float(self, binary_fraction: str):
         """
         Returns:
 
@@ -91,11 +92,12 @@ class IEEECustomLengthFormat(IEEEFormat):
     def __init__(self, exponent_length: int, mantissa_length: int):
         super().__init__(exponent_length, mantissa_length)
         assert (
-            (1 <= self.exponent_length <= 62)
-            and (1 <= self.mantissa_length <= 62)
-            and (3 <= self.total_bit_length <= 64)
+            (2 <= self.exponent_length <= 62)
+            and (1 <= self.mantissa_length <= 61)
+            and (4 <= self.total_bit_length <= 64)
         ), (
             "For the custom calculator mode: the exponent and mantissa"
             " bit-length has to be in the range from 1 to 63 and their sum"
-            " cannot exceed 64 in total"
+            " cannot exceed 64 in total."
+            " minimal exponent length is 3 and maximum mantissa length is 61."
         )
