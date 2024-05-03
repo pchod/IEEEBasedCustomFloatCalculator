@@ -17,16 +17,17 @@ class IEEEFormat:
         )
         # in denary
         self.minimum_exp_value = -self.bias + 1
-        self.max_exp_value = self.BASE ** self.exponent_length - 1
+        self.maximum_exp_value = (self.BASE ** self.exponent_length - 1 - 1) - self.bias
 
         # all 1s reserved for special cases
         self.max_normalised_exp = "1" * (exponent_length - 1) + "0"
         # all 0s reserved for special cases
         self.min_normalised_exp = "0" * (exponent_length - 1) + "1"
-        self.unbiased_exp_denary_value, self.max_normalised_exp_int = self._convert_exp_to_int(
-            self.max_normalised_exp
-        )
+        # with leading implicit 1 for normal-representation of mantissa
+        self.max_mantissa_normalised_bin = "1" * mantissa_length
+        self.max_mantissa_normalised_denary = 1.0 + self._convert_bin_fraction_to_int(self.max_mantissa_normalised_bin)
         self.minimal_denary_normalised = self.BASE ** self.minimum_exp_value * self.MINIMAL_NORMALISED_MANTISSA
+        self.maximal_denary_normalised = self.BASE ** self.maximum_exp_value * self.max_mantissa_normalised_denary
         self.max_left_shifts, self.max_right_shifts = (
             self._calculate_possible_shifts()
         )
@@ -38,16 +39,26 @@ class IEEEFormat:
 
         return max_left_shifts, max_right_shifts
 
-    def _convert_exp_to_int(self, binary: str):
-        """Converting binary exponent to integer. Returns unbiased and biased exp in denary."""
-        unbiased_exp_denary_value = 0
+    def _convert_bin_to_int(self, binary: str):
+        """Converting binary to integer."""
+        int_from_bin = 0
         for i, bit in enumerate(binary[::-1]):
             if bit == "1":
-                unbiased_exp_denary_value += self.BASE**i
+                int_from_bin += self.BASE**i
 
-        biased_exp_denary_value = unbiased_exp_denary_value + self.bias
+        return int_from_bin
 
-        return unbiased_exp_denary_value, biased_exp_denary_value
+    def _convert_bin_fraction_to_int(self, binary_fraction: str):
+        """
+        Returns:
+
+        """
+        decimal_fraction_from_bin = 0.0
+        for i, bit in enumerate(binary_fraction):
+            if bit == "1":
+                # i+1 to adjust 0-indexing to 1-indexing to properly represent powers
+                decimal_fraction_from_bin += self.BASE ** -(i + 1)
+        return decimal_fraction_from_bin
 
 
 
