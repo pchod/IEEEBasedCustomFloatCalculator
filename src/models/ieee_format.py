@@ -6,7 +6,8 @@ class IEEEFormat:
 
     BASE = 2
     SIGN_BIT_LENGTH = 1
-
+    # to represent leading 1 in the normalised form
+    MINIMAL_NORMALISED_MANTISSA = 1
     def __init__(self, exponent_length: int, mantissa_length: int):
         self.exponent_length = exponent_length
         self.mantissa_length = mantissa_length
@@ -14,18 +15,21 @@ class IEEEFormat:
         self.total_bit_length = (
             self.SIGN_BIT_LENGTH + self.exponent_length + self.mantissa_length
         )
+        # in denary
         self.minimum_exp_value = -self.bias + 1
         self.max_exp_value = self.BASE ** self.exponent_length - 1
 
         # all 1s reserved for special cases
         self.max_normalised_exp = "1" * (exponent_length - 1) + "0"
+        # all 0s reserved for special cases
+        self.min_normalised_exp = "0" * (exponent_length - 1) + "1"
         self.unbiased_exp_denary_value, self.max_normalised_exp_int = self._convert_exp_to_int(
             self.max_normalised_exp
         )
+        self.minimal_denary_normalised = self.BASE ** self.minimum_exp_value * self.MINIMAL_NORMALISED_MANTISSA
         self.max_left_shifts, self.max_right_shifts = (
             self._calculate_possible_shifts()
         )
-        self. min_value, self.max_value = None, None
 
     def _calculate_possible_shifts(self):
         """ """
