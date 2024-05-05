@@ -8,8 +8,8 @@ from models.number_representation import NumberRepresentation
 
 class InstanceManagement:
     
-    
-    def create_ieee_format_instance(self, format_type="custom_length", **kwargs):
+    @staticmethod
+    def create_ieee_format_instance(format_type="custom_length", **kwargs):
         if format_type == "16bit":
             return IEEE16BitFormat(**kwargs)
         elif format_type == "32bit":
@@ -18,10 +18,26 @@ class InstanceManagement:
             return IEEE64BitFormat(**kwargs)
         else:
             return IEEECustomLengthFormat(**kwargs)
-    
-    def create_number_representation_instance(self, ieee_format=None, binary_number=None, denary_number=None, ieee_float=None):
+    @staticmethod
+    def create_number_representation_instance(ieee_format=None, binary_number=None, denary_number=None, ieee_float=None):
         return NumberRepresentation(ieee_format=ieee_format, binary_number=binary_number, denary_number=denary_number)
-    
+
+    @staticmethod
+    def create_fractional_number_instance(**kwargs):
+        return FractionalNumber(**kwargs)
+
+    @staticmethod
+    def create_decimal_number_instance(**kwargs):
+        return DecimalNumber(**kwargs)
+
+    @staticmethod
+    def create_binary_number_instance(**kwargs):
+        return BinaryNumber(**kwargs)
+
+    @staticmethod
+    def
+
+
     def create_binary_number_instance(self, binary_whole_part, binary_fraction, is_positive):
         return BinaryNumber(binary_whole_part=binary_whole_part, binary_fraction=binary_fraction, is_positive=is_positive)
     

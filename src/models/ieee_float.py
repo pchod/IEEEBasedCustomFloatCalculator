@@ -7,18 +7,19 @@ class IEEEFloat:
     """IEEE 754 float representation"""
 
     def __init__(self,
-                 ieee_format: IEEEFormat,
-                 sign_bit: str,
-                 exponent: str,
-                 calculated_exponent: int,
-                 mantissa: str,
-                 binary_to_convert: str,
-                 is_precise: bool):
+                 ieee_format: IEEEFormat = None,
+                 sign_bit: str = None,
+                 exponent: str = None,
+                 calculated_exponent: int = None,
+                 mantissa: str = None,
+                 binary_to_convert: str = None,
+                 is_precise: bool = None,
+                 is_special: bool = None):
         self.ieee_format = ieee_format
         self.sign_bit = sign_bit
         self.exponent = exponent
         self.calculated_exponent = calculated_exponent
         self.mantissa = mantissa
         self.is_precise = is_precise
-        self.is_special = None
+        self.is_special = is_special
         self.binary_to_convert = binary_to_convert

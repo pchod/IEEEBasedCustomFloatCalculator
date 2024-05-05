@@ -15,6 +15,7 @@ class DenaryNumber:
         numerator //= gcd
         denominator //= gcd
         return numerator, denominator
+
     def _get_gcd(self, numerator, denominator):
         if denominator == 0:
             raise ZeroDivisionError("The denominator cannot be 0")
@@ -32,6 +33,7 @@ class DenaryNumber:
         if denominator == 0:
             raise ZeroDivisionError("The denominator cannot be 0")
         return True if denominator & (denominator - 1) == 0 else False
+
 
 class FractionalNumber(DenaryNumber):
     """ """
