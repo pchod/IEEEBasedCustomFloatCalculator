@@ -6,11 +6,11 @@ class BinaryNumber:
 
     def __init__(
         self,
-        binary_whole_part: str,
-        binary_fraction: str,
-        is_positive: bool,
+        binary_whole_part: str = None,
+        binary_fraction: str = None,
+        is_positive: bool = None,
         
     ):
         self.binary_whole_part = binary_whole_part
         self.binary_fraction = binary_fraction
-        self.is_positive = bool
+        self.is_positive = is_positive
