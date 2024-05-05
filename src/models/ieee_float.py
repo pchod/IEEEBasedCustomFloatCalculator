@@ -3,7 +3,7 @@
 from models.ieee_format import IEEEFormat
 
 
-class IEEEfloat:
+class IEEEFloat:
     """IEEE 754 float representation"""
 
     def __init__(self,
