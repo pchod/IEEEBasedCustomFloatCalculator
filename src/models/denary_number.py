@@ -56,12 +56,11 @@ class DecimalNumber(DenaryNumber):
     """ """
 
     def __init__(self, int_part: str, fract_part: str, is_positive=True):
+        self.decimal_number = float(f"{int_part}.{fract_part}")
         self.int_part = int(int_part)
-        self.fractional_part = fract_part
-        self.decimal_number = float(str(self.int_part) + str(self.fractional_part))
-        self.simplified_fractional_part = int(str(self.fractional_part).rstrip("0"))
+        self.fractional_part = self.decimal_number - self.int_part
         self.is_positive = is_positive
-        self.is_decimal_zero = self.int_part == 0 and self.simplified_fractional_part == 0
+        self.is_decimal_zero = self.int_part == 0 and self.fractional_part == 0
         self.numerator_derived, self.denominator_derived = self._convert_to_fractional()
         self.den_derived_is_power_of_2 = self._is_den_power_of_2(self.denominator_derived)
 
@@ -69,9 +68,10 @@ class DecimalNumber(DenaryNumber):
         """Returns a tuple numerator, denominator"""
         if self.is_decimal_zero:
             return 0, 1
-        elif self.simplified_fractional_part == 0:
+        elif self.fractional_part == 0:
             return self.int_part, 1
         else:
-            denominator = 10 ** len(str(self.simplified_fractional_part))
-            numerator = self.int_part * denominator + self.simplified_fractional_part
+            fract_part_str = str(self.fractional_part).split(".")[1]
+            denominator = 10 ** len(fract_part_str)
+            numerator = int(fract_part_str) + self.int_part * denominator
             return self._simplify_fraction(numerator, denominator)
