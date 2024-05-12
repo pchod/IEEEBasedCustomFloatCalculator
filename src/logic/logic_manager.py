@@ -2,17 +2,41 @@
 
 import json
 from binary_operations import BinaryOperations
-from instance_management import InstanceManagement
+from instance_manager import InstanceManager
 
 class LogicManager:
     """Orchestrating the logic flow of the calculator"""
 
-    def __init__(self):
-        self.instance_manager = InstanceManagement()
-        self.binary_operations = BinaryOperations()
+    def __init__(self, json_input):
+        """
+        Paths of calculation:
+        1. Fractional to IEEE 754
+        2. Decimal to IEEE 754
+        3. Scientific binary to IEEE 754
+        4. IEEE 754 to Fractional
 
+        """
+        self.history_of_operations = []
+        self.instance_manager = InstanceManager()
+        assert isinstance(path, int) and path > 0
+    def execute(self):
+        if self.path == 1:
+            return self.convert_fractional_to_IEEE_float(numerator, denominator)
+            self.history_of_operations +=
+
+        """
+        if self.path == 2:
+            return self.convert_decimal_to_IEEE_float(int_part, fract_part, is_positive)
+        
+        if self.path == 3:
+            return
+        """
     def convert_fractional_to_IEEE_float(self, numerator, denominator):
-        pass
+        fractional_number = self.instance_manager.create_fractional_number(numerator, denominator)
+
+
+
+
     """
     def convert_denary_fraction_to_IEEE_float_normal_num(self, input_data):
         Working on seperate arguments instead of class objects - need to change, when the functions work properly
