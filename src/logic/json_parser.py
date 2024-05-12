@@ -12,12 +12,12 @@ class JSONParser:
 
     def parse_ieee_format(self):
         ieee_format = self.json_data.get("ieee_format")
+        exponent_length = None
+        mantissa_length = None
         if ieee_format == "custom":
             exponent_length = self.json_data.get("exponent_length")
             mantissa_length = self.json_data.get("mantissa_length")
-            return ieee_format, exponent_length, mantissa_length
-        else:
-            return ieee_format
+        return ieee_format, exponent_length, mantissa_length
 
     def parse_fractional(self):
         is_positive = self.json_data.get("is_positive")
