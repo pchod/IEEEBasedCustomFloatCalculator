@@ -25,7 +25,7 @@ The UI part will be designed in flask, while the whole backend I wrote in vanill
 
 🚧 In Progress 🚧
 
-The project is still in progress - the planned date of deploment is 31st of January 2024. Parts of the logic had underwent
+The project is still in progress - the planned date of deployment is July 2024. Parts of the logic had underwent
 unit tests and work as designed.
 
 ## Technical Overview
