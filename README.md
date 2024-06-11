@@ -30,7 +30,7 @@ unit tests and work as designed.
 
 ## Technical Overview
 
-The program is designed in the MVC (Model - View - Controller) approach.
+Backend will be implented using Flask, frontend with React (using TypeScript).
 
 ## Testing
 
