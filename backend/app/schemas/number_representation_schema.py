@@ -1,25 +1,18 @@
-# number_representation_schema.py
+from marshmallow import Schema, fields, post_load
+from backend.app.models.number_representation import NumberRepresentation
+from ieee_format_schema import IEEEFormatSchema
+from binary_number_schema import BinaryNumberSchema
+from denary_number_schema import DecimalNumberSchema, FractionalNumberSchema
+from ieee_float_schema import IEEEFloatSchema
 
-from marshmallow import Schema, fields
 
-class NumberRepresentation:
-    """Composite class that represents a number in all its forms"""
+class NumberRepresentationSchema(Schema):
+    ieee_format = fields.Nested(IEEEFormatSchema, required=False)
+    binary_number = fields.Nested(BinaryNumberSchema, required=False)
+    decimal_number = fields.Nested(DecimalNumberSchema, required=False)
+    fractional_number = fields.Nested(FractionalNumberSchema, required=False)
+    ieee_float = fields.Nested(IEEEFloatSchema, required=False)
 
-    def __init__(
-            self,
-            ieee_format: IEEEFormat = None,
-            binary_number: BinaryNumber = None,
-            decimal_number: DecimalNumber = None,
-            fractional_number: FractionalNumber = None,
-            ieee_float: IEEEfloat = None,
-    ) -> None:
-        self.ieee_format = ieee_format
-        self.binary_number = binary_number
-        self.denary = decimal_number if decimal_number is not None else fractional_number
-        self.ieee_float = ieee_float
-
-    def is_fractional(self):
-        return isinstance(self.denary, FractionalNumber)
-
-    def is_decimal(self):
-        return isinstance(self.denary, DecimalNumber)
+    @post_load
+    def make_number_representation(self, data, **kwargs):
+        return NumberRepresentation(**data)

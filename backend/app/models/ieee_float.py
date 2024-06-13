@@ -1,6 +1,6 @@
 # ieee_float.py
 
-from models.ieee_format import IEEEFormat
+from ieee_format import IEEEFormat
 
 
 class IEEEFloat:

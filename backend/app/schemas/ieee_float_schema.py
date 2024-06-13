@@ -4,26 +4,17 @@ from marshmallow import Schema, fields
 
 # ieee_float.py
 
-from models.ieee_format import IEEEFormat
+from ieee_format_schema import (IEEEFormatSchema, IEEE16BitFormatSchema, IEEE32BitFormatSchema, IEEE64BitFormatSchema,
+                                IEEECustomLengthFormatSchema)
 
 
-class IEEEFloat:
+class IEEEFloatSchema:
     """IEEE 754 float representation"""
-
-    def __init__(self,
-                 ieee_format: IEEEFormat = None,
-                 sign_bit: str = None,
-                 exponent: str = None,
-                 calculated_exponent: int = None,
-                 mantissa: str = None,
-                 binary_to_convert: str = None,
-                 is_precise: bool = None,
-                 is_special: bool = None):
-        self.ieee_format = ieee_format
-        self.sign_bit = sign_bit
-        self.exponent = exponent
-        self.calculated_exponent = calculated_exponent
-        self.mantissa = mantissa
-        self.is_precise = is_precise
-        self.is_special = is_special
-        self.binary_to_convert = binary_to_convert
+    ieee_format = fields.Nested(IEEEFormatSchema)
+    sign_bit = fields.String(required=True)
+    exponent = fields.String(required=True)
+    mantissa = mantissa = fields.String(required=True)
+    calculated_exponent = fields.Integer(dump_only=True)
+    is_precise = fields.Boolean(dump_only=True)
+    is_special = fields.Boolean(dump_only=True)
+    binary_to_convert = fields.String(dump_only=True)
