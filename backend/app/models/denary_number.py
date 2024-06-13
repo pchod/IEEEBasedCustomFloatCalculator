@@ -1,6 +1,5 @@
 # denary_number.py
 
-
 from models.ieee_format import IEEEFormat
 
 

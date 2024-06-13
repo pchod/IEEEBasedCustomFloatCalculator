@@ -1,6 +1,5 @@
 # binary_number.py
 
-
 class BinaryNumber:
     """Represents a binary number in a scientific notation form"""
 
