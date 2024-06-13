@@ -15,7 +15,7 @@ class NumberRepresentation:
             binary_number: BinaryNumber = None,
             decimal_number: DecimalNumber = None,
             fractional_number: FractionalNumber = None,
-            ieee_float: IEEEfloat = None,
+            ieee_float: IEEEFloat = None,
     ) -> None:
         self.ieee_format = ieee_format
         self.binary_number = binary_number
