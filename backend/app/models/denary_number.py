@@ -57,14 +57,15 @@ class DecimalNumber(DenaryNumber):
     """ """
 
     def __init__(self, int_part: str, fract_part: str, is_positive=True):
-        self.decimal_number = float(f"{int_part}.{fract_part}")
-        self.int_part = int(int_part)
-        self.fractional_part = self.decimal_number - self.int_part
+        self.int_part = int_part
+        self.fractional_part = fract_part
         self.is_positive = is_positive
-        self.is_decimal_zero = self.int_part == 0 and self.fractional_part == 0
+        self.decimal_number = f"{int_part}.{fract_part}"
+        self.is_decimal_zero = True if all(char == '0' for char in int_part) and all(char == '0' for char in fract_part) else False
         self.numerator_derived, self.denominator_derived = self._convert_to_fractional()
         self.den_derived_is_power_of_2 = self._is_den_power_of_2(self.denominator_derived)
 
+# NEEDS CHANGE - TO WORK ONLY ON STRINGS PASSED
     def _convert_to_fractional(self):
         """Returns a tuple numerator, denominator"""
         if self.is_decimal_zero:
