@@ -13,7 +13,7 @@ class FractionalNumberSchema(Schema):
     decimal_float_derived = fields.Float(dump_only=True)
 
 
-class DecimalNumber(DenaryNumber):
+class DecimalNumberSchema(Schema):
     int_part = fields.String(required=True)
     fractional_part = fields.String(required=True)
     is_positive = fields.Boolean(required=True)
