@@ -14,5 +14,8 @@ class NumberRepresentationSchema(Schema):
     ieee_float = fields.Nested(IEEEFloatSchema, required=False)
 
     @post_load
-    def make_number_representation(self, data, **kwargs):
+    def make_number_representation(self, data):
         return NumberRepresentation(**data)
+
+    def serialize(self, data):
+        return self.dump(data)

@@ -16,6 +16,7 @@ class IEEEFloatSchema(Schema):
     mantissa = fields.String(required=True)
     calculated_exponent = fields.Integer(dump_only=True)
     is_precise = fields.Boolean(dump_only=True)
+    rounded_by = fields.String(dump_only=True)
     is_special = fields.Boolean(dump_only=True)
     binary_to_convert = fields.String(dump_only=True)
 

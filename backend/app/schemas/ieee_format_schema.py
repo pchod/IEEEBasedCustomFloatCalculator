@@ -46,5 +46,5 @@ class IEEE64BitFormatSchema(IEEEFormatSchema):
 
 class IEEECustomLengthFormatSchema(IEEEFormatSchema):
     @post_load
-    def make_ieee_format(self, data, **kwargs):
+    def make_ieee_format(self, data):
         return IEEECustomLengthFormat(**data)
