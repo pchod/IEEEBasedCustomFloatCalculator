@@ -16,23 +16,21 @@ class FractionalNumberSchema(Schema):
 
     @validates_schema
     def validate_schema(self, data, **kwargs):
+        errors = {}
         numerator = data.get("numerator")
-        numerator_entered = data.get("numerator_entered")
         denominator = data.get("denominator")
-        denominator_entered = data.get("denominator_entered")
-        decimal_float_derived = data.get("decimal_float_derived")
 
-        if (numerator or numerator_entered) < 0:
-            raise ValidationError("Numerator cannot be negative value.")
+        if numerator < 0:
+            errors["numerator"] = "Numerator cannot be a negative value. The sign is governed by boolean flag."
 
-        if (denominator or denominator_entered) < 0:
-            raise ValidationError("Denominator cannot be negative value.")
+        if denominator == 0:
+            errors["denominator"] = "Denominator cannot be zero."
 
-        if (denominator or denominator_entered) == 0:
-            raise ValidationError("Denominator cannot be zero value.")
+        if denominator < 0:
+            errors["denominator"] = "Denominator cannot be a negative value. The sign is governed by boolean flag."
 
-        if decimal_float_derived < 0:
-            raise ValidationError("Decimal float cannot be negative value.")
+        if errors:
+            raise ValidationError(errors)
 
     @post_load
     def create_fractional_number(self, data):
