@@ -5,13 +5,12 @@ from backend.app.models.ieee_float import IEEEFloat
 
 # ieee_float.py
 
-from ieee_format_schema import (IEEEFormatSchema, IEEE16BitFormatSchema, IEEE32BitFormatSchema, IEEE64BitFormatSchema,
-                                IEEECustomLengthFormatSchema)
+from ieee_format_schema import IEEEFormatSchema
 
 
-class IEEEFloatSchema:
+class IEEEFloatSchema(Schema):
     """IEEE 754 float representation"""
-    ieee_format = fields.Nested(IEEEFormatSchema)
+    ieee_format = fields.Nested(IEEEFormatSchema, required=True)
     sign_bit = fields.String(required=True)
     exponent = fields.String(required=True)
     mantissa = fields.String(required=True)
@@ -21,7 +20,7 @@ class IEEEFloatSchema:
     binary_to_convert = fields.String(dump_only=True)
 
     @post_load
-    def create_ieee_float(self, data):
+    def create_ieee_float(self, data, **kwargs):
         return IEEEFloat(**data)
 
     def serialize(self, ieee_float):
