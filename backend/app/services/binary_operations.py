@@ -4,8 +4,8 @@ from pprint import pprint
 
 from icecream import ic
 
-from models.ieee_format import IEEEFormat
-from models.denary_number import DenaryNumber
+from backend.app.models.ieee_format import IEEEFormat
+from backend.app.models.denary_number import DenaryNumber
 
 
 class BinaryOperations:
@@ -13,12 +13,12 @@ class BinaryOperations:
     @staticmethod
     def check_underflow(ieee_underflow_value, number):
         """Returns a bool for underflow check. True, if the number is in the underflow range"""
-        return -(ieee_underflow_value) < number < ieee_underflow_value
+        return -ieee_underflow_value < number < ieee_underflow_value
 
     @staticmethod
     def check_overflow(ieee_overflow_value, number):
         """Returns a bool for overflow check. True, if the number is above the overflow ranges"""
-        return number < -(ieee_overflow_value) or number > ieee_overflow_value
+        return number < -ieee_overflow_value or number > ieee_overflow_value
 
     @staticmethod
     def check_special_cases():
