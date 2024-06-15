@@ -13,4 +13,4 @@ class BinaryNumber:
         self.binary_whole_part = binary_whole_part
         self.binary_fraction = binary_fraction
         self.is_positive = is_positive
-        self.sign_bit = "0" if is_positive else "1"
+

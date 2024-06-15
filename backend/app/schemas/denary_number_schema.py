@@ -1,7 +1,6 @@
 # denary_number_schema.py
 
 from marshmallow import Schema, fields, post_load, ValidationError, validates_schema
-
 from backend.app.models.denary_number import FractionalNumber, DecimalNumber
 
 
