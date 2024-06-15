@@ -1,9 +1,7 @@
-# number_representation.py
-
-from binary_number import BinaryNumber
-from ieee_format import IEEEFormat
-from ieee_float import IEEEFloat
-from denary_number import FractionalNumber, DecimalNumber
+from backend.app.models.binary_number import BinaryNumber
+from backend.app.models.ieee_format import IEEEFormat
+from backend.app.models.ieee_float import IEEEFloat
+from backend.app.models.denary_number import FractionalNumber, DecimalNumber
 
 
 class NumberRepresentation:

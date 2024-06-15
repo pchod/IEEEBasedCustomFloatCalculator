@@ -3,14 +3,9 @@
 from marshmallow import Schema, fields, post_load
 from backend.app.models.ieee_float import IEEEFloat
 
-# ieee_float.py
-
-from ieee_format_schema import IEEEFormatSchema
-
 
 class IEEEFloatSchema(Schema):
     """IEEE 754 float representation"""
-    ieee_format = fields.Nested(IEEEFormatSchema, required=True)
     sign_bit = fields.String(required=True)
     exponent = fields.String(required=True)
     mantissa = fields.String(required=True)

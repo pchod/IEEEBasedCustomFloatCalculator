@@ -1,12 +1,12 @@
-# fractional_to_ieee.py
-
 from flask import Blueprint, request, jsonify, make_response
 from marshmallow import ValidationError
 
-from backend.app.schemas import denary_number_schema, ieee_format_schema
+from backend.app.schemas import denary_number_schema, ieee_format_schema, number_representation_schema
+from backend.app.services.calculator_service import CalculatorService
 
 fractional_to_ieee_bp = Blueprint('fractional_to_ieee_bp', __name__)
 fraction_schema = denary_number_schema.FractionalNumberSchema()
+number_representation_schema = number_representation_schema.NumberRepresentationSchema()
 
 
 @fractional_to_ieee_bp.route('/api/v1/fractional_to_ieee/<string:ieee_format>', methods=['POST'])
@@ -34,4 +34,17 @@ def fractional_to_ieee(ieee_format):
         else:
             raise ValidationError(f"Unsupported format {ieee_format}")
 
-        result = CalculatorService.calculate_ieee_from_fractional(fractional_number, ieee_format_instance)
+        # Calculate the IEEE representation
+        number_representation_instance = CalculatorService.calculate_ieee_from_fractional(fractional_number, ieee_format_instance)
+        print(f"Final number representation instance: {number_representation_instance}")
+
+        # Serialize the result
+        result = number_representation_schema.dump(number_representation_instance)
+        print(f"Serialized result: {result}")
+        return jsonify(result)
+
+    except ValidationError as err:
+        return make_response(jsonify({"error": err.messages}), 400)
+
+    except Exception as e:
+        return make_response(jsonify({"error": str(e)}), 500)

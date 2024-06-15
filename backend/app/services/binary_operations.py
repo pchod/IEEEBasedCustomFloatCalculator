@@ -378,23 +378,29 @@ class BinaryOperations:
                 return calculated_bin_exponent
             elif len(calculated_bin_exponent) == ieee_format.exponent_length:
                 return calculated_bin_exponent
-    @staticmethod   
+
+    @staticmethod
     def need_to_round(normalized_fractional_part_bin, ieee_format: IEEEFormat, den_is_power_of_2: bool):
         """Checks if the normalized fractional part needs to be rounded. The normalized fractional part has to be passed without the leading 1.
-        The rule for rounding is round do nearest, tie to even. The function returns True if the rounding is needed and False if not."""
+        The rule for rounding is round to nearest, tie to even. The function returns True if the rounding is needed and False if not."""
 
         print("debug: first digit of the normalized fractional part", normalized_fractional_part_bin[0])
         if len(normalized_fractional_part_bin) < ieee_format.mantissa_length:
             return False
         normalized_fractional_part_bin = list(normalized_fractional_part_bin)
-        lsb, guard_bit = normalized_fractional_part_bin[ieee_format.mantissa_length - 1], normalized_fractional_part_bin[ieee_format.mantissa_length]
+
+        # Ensure enough length for accessing indices
+        if len(normalized_fractional_part_bin) < ieee_format.mantissa_length + 2:
+            return False
+
+        lsb = normalized_fractional_part_bin[ieee_format.mantissa_length - 1]
+        guard_bit = normalized_fractional_part_bin[ieee_format.mantissa_length]
         rounding_bit = normalized_fractional_part_bin[ieee_format.mantissa_length + 1]
         sticky_bit = "1" if not den_is_power_of_2 else "0"
-        # no rounding needed for LSB = 1
+
         if lsb == "1":
             return False
-        
-        # if LSB is 0 no rounding is needed
+
         if lsb == "0":
             if guard_bit and rounding_bit and sticky_bit == "0":
                 return False
@@ -402,15 +408,24 @@ class BinaryOperations:
                 return True
             elif guard_bit == "0" and (rounding_bit or sticky_bit) == "1":
                 return True
-        
+
     @staticmethod
-    def round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format: IEEEFormat, den_is_power_of_2: bool):
+    def round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format: IEEEFormat,
+                                             den_is_power_of_2: bool):
         """Rounding the normalized fractional part. It is assumed that the normalized fractional part is passed without the leading 1.
         The function returns the rounded normalized fractional part. It's assumed, that LSB is 1 (based on the need_to_round function).
         The rounding is performed based on the LSB, guard bit, rounding bit and sticky bit."""
         normalized_fractional_part_bin = list(normalized_fractional_part_bin)
-        lsb, guard_bit, rounding_bit = normalized_fractional_part_bin[ieee_format.mantissa_length - 1], normalized_fractional_part_bin[ieee_format.mantissa_length], normalized_fractional_part_bin[ieee_format.mantissa_length + 1]
+
+        # Ensure enough length for accessing indices
+        if len(normalized_fractional_part_bin) < ieee_format.mantissa_length + 2:
+            return ''.join(normalized_fractional_part_bin)
+
+        lsb = normalized_fractional_part_bin[ieee_format.mantissa_length - 1]
+        guard_bit = normalized_fractional_part_bin[ieee_format.mantissa_length]
+        rounding_bit = normalized_fractional_part_bin[ieee_format.mantissa_length + 1]
         sticky_bit = "1" if not den_is_power_of_2 else "0"
+
         if guard_bit == "0" and rounding_bit == "0":
             lsb = "0"
         elif guard_bit == "0" and rounding_bit == "1":
@@ -422,9 +437,9 @@ class BinaryOperations:
                 lsb = "1"
             else:
                 lsb = "0"
+
         normalized_fractional_part_bin[ieee_format.mantissa_length - 1] = lsb
         return "".join(normalized_fractional_part_bin)
-            
 
     @staticmethod
     def calculate_IEEE_float(is_positive: bool, exponent: int, normalized_fractional_part: str, ieee_format: IEEEFormat):

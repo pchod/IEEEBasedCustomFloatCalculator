@@ -1,5 +1,3 @@
-# ieee_format_schema.py
-
 from marshmallow import Schema, fields, post_load, validates_schema, ValidationError
 from backend.app.models.ieee_format import (IEEEFormat, IEEE16BitFormat, IEEE32BitFormat, IEEE64BitFormat,
                                             IEEECustomLengthFormat)
@@ -26,25 +24,28 @@ class IEEEFormatSchema(Schema):
         return IEEEFormat(**data)
 
 
-class IEEE16BitFormatSchema(IEEEFormatSchema):
+class IEEE16BitFormatSchema(Schema):
     @post_load
     def make_ieee_format(self, data, **kwargs):
         return IEEE16BitFormat()
 
 
-class IEEE32BitFormatSchema(IEEEFormatSchema):
+class IEEE32BitFormatSchema(Schema):
     @post_load
     def make_ieee_format(self, data, **kwargs):
         return IEEE32BitFormat()
 
 
-class IEEE64BitFormatSchema(IEEEFormatSchema):
+class IEEE64BitFormatSchema(Schema):
     @post_load
     def make_ieee_format(self, data, **kwargs):
         return IEEE64BitFormat()
 
 
-class IEEECustomLengthFormatSchema(IEEEFormatSchema):
+class IEEECustomLengthFormatSchema(Schema):
+    exponent_length = fields.Int(required=True)
+    mantissa_length = fields.Int(required=True)
+
     @post_load
-    def make_ieee_format(self, data):
+    def make_ieee_format(self, data, **kwargs):
         return IEEECustomLengthFormat(**data)

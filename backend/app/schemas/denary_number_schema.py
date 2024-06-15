@@ -1,5 +1,3 @@
-# denary_number_schema.py
-
 from marshmallow import Schema, fields, post_load, ValidationError, validates_schema
 from backend.app.models.denary_number import FractionalNumber, DecimalNumber
 
@@ -32,7 +30,7 @@ class FractionalNumberSchema(Schema):
             raise ValidationError(errors)
 
     @post_load
-    def create_fractional_number(self, data):
+    def create_fractional_number(self, data, **kwargs):
         return FractionalNumber(**data)
 
     def serialize(self, fractional_number):
@@ -50,7 +48,7 @@ class DecimalNumberSchema(Schema):
     den_derived_is_power_of_2 = fields.Boolean(dump_only=True)
 
     @post_load
-    def create_decimal_number(self, data):
+    def create_decimal_number(self, data, **kwargs):
         return DecimalNumber(**data)
 
     def serialize(self, decimal_number):
