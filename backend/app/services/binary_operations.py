@@ -23,7 +23,21 @@ class BinaryOperations:
     @staticmethod
     def check_special_cases():
         pass
-    
+
+    @staticmethod
+    def compare_binaries(bin1: str, bin2: str) -> int:
+        """Compare two binary strings lexicographically"""
+        max_len = max(len(bin1), len(bin2))
+        bin1 = bin1.zfill(max_len)
+        bin2 = bin2.zfill(max_len)
+
+        if bin1 < bin2:
+            return -1
+        elif bin1 == bin2:
+            return 0
+        else:
+            return 1
+
     @staticmethod
     def compare_bin_lengths(binary_1: str, binary_2: str):
         if len(binary_1) > len(binary_2):
@@ -58,51 +72,39 @@ class BinaryOperations:
         return fraction_part_bin
 
     @staticmethod
-    def subtract_binaries(binary_1: str, binary_2: str):
-        """Subtracting binary_1 - binary_2 using bitwise operations. It is guaranteed, that binary_1 > binary_2 - need to add the check"""
-        # ic(binary_1, binary_2)
-        subtraction_product = []
-        borrow = False
-        print("state before subtraction, checking remaining borrow based on the previous iteration")
-        ic(binary_1, binary_2, borrow)
-        # performing subtraction from right to left
-        for index in range((len(binary_1) - 1), -1, -1):
-            # ic(subtraction_product)
-            bit_binary_1 = binary_1[index]
-            bit_binary_2 = binary_2[index]
-            print()
+    def subtract_binaries(bin1: str, bin2: str) -> str:
+        """Subtract binary_2 from binary_1. Assumes binary_1 >= binary_2."""
+        max_len = max(len(bin1), len(bin2))
+        bin1 = bin1.zfill(max_len)
+        bin2 = bin2.zfill(max_len)
 
-            print()
-            print("starting subtraction")
-            print(bit_binary_1, bit_binary_2, borrow, subtraction_product)
+        result = []
+        borrow = False
+
+        for i in range(max_len - 1, -1, -1):
+            bit1 = bin1[i]
+            bit2 = bin2[i]
+
             if borrow:
-                # if the previous subtraction required a borrow, the current bit is borrowed
-                if bit_binary_1 == "1" and bit_binary_2 == "0":
-                    bit_binary_1 = "0"
-                    # resolving the borrow
+                if bit1 == '1':
+                    bit1 = '0'
                     borrow = False
                 else:
-                    bit_binary_1 = "1"
-                    # still need to borrow for the next iterated bit
+                    bit1 = '1'
                     borrow = True
-                
-            if bit_binary_1 == bit_binary_2:
-                    # if the bits are equal, the product is 0
-                subtraction_product.append("0")
-            elif bit_binary_1 > bit_binary_2:
-                    # if the bit from binary_1 is greater, the product is 1
-                subtraction_product.append("1")
-            else:
-                # if the bit from binary_2 is greater, the product is 1
-                subtraction_product.append("1")
+
+            if bit1 == '0' and bit2 == '1':
                 borrow = True
-                # for equal bits the product is 0, if the bit is borrowed, be become 1
-                # print("bit 1 is equal to bit 2")
-        # ic(subtraction_product)
-        subtraction_product_reversed = reversed(subtraction_product)
-        subtraction_product_bin = "".join(subtraction_product_reversed)
-        # ic(subtraction_product_bin)
-        return subtraction_product_bin
+                result.append('1')
+            elif bit1 == bit2:
+                result.append('0')
+            else:
+                result.append('1')
+
+        # Remove leading zeros and return result
+        result.reverse()
+        result = ''.join(result).lstrip('0')
+        return result or '0'
 
     @staticmethod
     def convert_int_to_binary(number: int):
@@ -114,7 +116,45 @@ class BinaryOperations:
             binary = str(number % 2) + binary
             number = number // 2
         return binary
-    
+
+    @staticmethod
+    def new_whole_part_long_division(num_bin: str, den_bin: str):
+        """
+        Performed only if num > den.
+        Returns:
+            Whole part bin
+            Remainder for the fractional division.
+        """
+
+        def _long_division_whole(remainder, divisor, whole_part_bin, index):
+            if index == len(num_bin):
+                return whole_part_bin, remainder
+
+            # Shift the remainder by adding the next bit of the numerator
+            remainder += num_bin[index]
+            remainder = remainder.lstrip('0') or '0'
+
+            padded_remainder, padded_denominator = BinaryOperations.left_zero_pad_shorter_bin(remainder, divisor)
+            comparison_result = BinaryOperations.compare_binaries(padded_remainder, padded_denominator)
+
+            if comparison_result >= 0:
+                whole_part_bin.append("1")
+                remainder = BinaryOperations.subtract_binaries(padded_remainder, padded_denominator)
+            else:
+                whole_part_bin.append("0")
+
+            return _long_division_whole(remainder, divisor, whole_part_bin, index + 1)
+
+        if len(num_bin) < len(den_bin):
+            return "0", num_bin
+        elif num_bin == den_bin:
+            return "1", "0"
+        else:
+            whole_part_bin = []
+            quotient, remainder = _long_division_whole("", den_bin, whole_part_bin, 0)
+            quotient = ''.join(quotient).lstrip("0") or "0"
+            return quotient, remainder
+
     @staticmethod
     def convert_to_binary_fraction_whole_part(
         numerator_bin: str, denominator_bin: str
@@ -125,13 +165,13 @@ class BinaryOperations:
         print("new division")
         print()
         ic(numerator_bin, denominator_bin)
-        numerator_bin = numerator_bin.lstrip("0")
+        #numerator_bin = numerator_bin.lstrip("0")
         if not numerator_bin:
             numerator_bin = "0"
         # need for thoroygh testing
         if not denominator_bin:
             raise ValueError("Cannot divide by zero")
-        denominator_bin = denominator_bin.lstrip("0")
+        # denominator_bin = denominator_bin.lstrip("0")
         ic(numerator_bin, denominator_bin)
         whole_part_bin = ""
         remainder_bin = ""
@@ -471,7 +511,7 @@ class BinaryOperations:
         need_to_round = BinaryOperations.need_to_round(normalized_fractional_part_bin, ieee_format, den_is_power_of_2)
         if need_to_round:
             normalized_fractional_part_bin = BinaryOperations.round_the_normalized_fractional_part(normalized_fractional_part_bin, ieee_format, den_is_power_of_2)
-        sign_bit, exponent, mantissa = BcinaryOperations.calculate_IEEE_float(is_positive, exponent_int, normalized_fractional_part_bin, ieee_format)
+        sign_bit, exponent, mantissa = BinaryOperations.calculate_IEEE_float(is_positive, exponent_int, normalized_fractional_part_bin, ieee_format)
         print(f"Length of sign bit: {len(sign_bit)}, length of exponent: {len(exponent)}, length of mantissa: {len(mantissa)}. Was the number rounded? {need_to_round}")
         return (sign_bit, exponent, mantissa)
 

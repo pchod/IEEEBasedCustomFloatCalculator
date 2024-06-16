@@ -63,7 +63,7 @@ class CalculatorService:
         denominator_bin = BinaryOperations.convert_int_to_binary(fractional_number.denominator)
         print(f"numerator_bin: {numerator_bin}, denominator_bin: {denominator_bin}")
 
-        whole_part_bin, remainder_bin = BinaryOperations.convert_to_binary_fraction_whole_part(numerator_bin,
+        whole_part_bin, remainder_bin = BinaryOperations.new_whole_part_long_division(numerator_bin,
                                                                                                denominator_bin)
         print(f"whole_part_bin: {whole_part_bin}, remainder_bin: {remainder_bin}")
 
