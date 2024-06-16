@@ -155,7 +155,7 @@ class CalculatorService:
     def _pad_mantissa(number_representation: NumberRepresentation):
         if len(number_representation.ieee_float.mantissa) < number_representation.ieee_format.mantissa_length:
             number_representation.ieee_float.mantissa = number_representation.ieee_float.mantissa + '0' * (
-                        number_representation.ieee_format.mantissa_length - len(
-                    number_representation.ieee_float.mantissa))
+                    number_representation.ieee_format.mantissa_length - len(
+                number_representation.ieee_float.mantissa))
         print(
             f"Before padding: {number_representation.ieee_float.mantissa} (length {len(number_representation.ieee_float.mantissa)})")
