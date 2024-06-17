@@ -8,6 +8,14 @@ class IEEEFormat:
     SIGN_BIT_LENGTH = 1
     # to represent leading 1 in the normalised form
     MINIMAL_NORMALISED_MANTISSA = 1
+    # Possible floating-point classes
+    CLASS_ZERO_POSITIVE = "positiveZero"
+    CLASS_ZERO_NEGATIVE = "negativeZero"
+    CLASS_SUBNORMAL = "subnormal"
+    CLASS_NORMAL = "normal"
+    CLASS_INFINITY_POSITIVE = "positiveInfinity"
+    CLASS_INFINITY_NEGATIVE = "negativeInfinity"
+    CLASS_NAN = "NaN"
     def __init__(self, exponent_length: int, mantissa_length: int):
         self.exponent_length = exponent_length
         self.mantissa_length = mantissa_length
@@ -27,18 +35,10 @@ class IEEEFormat:
         self.max_mantissa_normalised_bin = "1" * mantissa_length
         self.max_mantissa_normalised_denary = 1.0 + self._convert_bin_fraction_to_float(
             self.max_mantissa_normalised_bin)
-        self.minimal_denary_normalised = self.BASE ** self.minimum_exp_value * self.MINIMAL_NORMALISED_MANTISSA
-        self.maximal_denary_normalised = self.BASE ** self.maximum_exp_value * self.max_mantissa_normalised_denary
-        self.max_left_shifts, self.max_right_shifts = (
-            self._calculate_possible_shifts()
-        )
-
-    def _calculate_possible_shifts(self):
-        """ """
-        max_left_shifts = self.BASE ** self.exponent_length - 1 - self.bias
-        max_right_shifts = -self.bias
-
-        return max_left_shifts, max_right_shifts
+        self.minimal_denary_normalised = 2 ** self.minimum_exp_value
+        self.maximal_denary_normalised = (2 - 2 ** -self.mantissa_length) * (2 ** self.maximum_exp_value)
+        self.max_left_shifts = self.maximum_exp_value + 1
+        self.max_right_shifts = abs(self.minimum_exp_value)
 
     def _convert_bin_to_int(self, binary: str):
         """Converting binary to integer."""

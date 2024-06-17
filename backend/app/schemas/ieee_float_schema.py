@@ -14,6 +14,9 @@ class IEEEFloatSchema(Schema):
     rounded_by = fields.String(dump_only=True)
     is_special = fields.Boolean(dump_only=True)
     binary_to_convert = fields.String(dump_only=True)
+    left_shifts_performed = fields.Integer(dump_only=True)
+    right_shifts_performed = fields.Integer(dump_only=True)
+    number_class = fields.String(dump_only=True)
 
     @post_load
     def create_ieee_float(self, data, **kwargs):

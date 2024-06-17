@@ -4,6 +4,7 @@ from backend.app.models.ieee_float import IEEEFloat
 from backend.app.models.denary_number import FractionalNumber, DecimalNumber
 from backend.app.models.number_representation import NumberRepresentation
 from backend.app.services.binary_operations import BinaryOperations
+from backend.app.utils.ieee_utils import IEEEUtils
 
 
 class CalculatorService:
@@ -25,6 +26,9 @@ class CalculatorService:
 
         # Perform calculations
         try:
+            number_representation.ieee_float.number_class = IEEEUtils.get_ieee_class_for_fractional(number_representation.denary.decimal_float_derived, number_representation.denary.denominator, number_representation.denary.is_positive, number_representation.ieee_format.minimal_denary_normalised, number_representation.ieee_format.maximal_denary_normalised)
+            # if number_representation.ieee_format.number_class != "normal" or "subnormal":
+
             CalculatorService._calculate_and_update_binary_whole_and_fractional(number_representation)
             print(f"Binary representation: {number_representation.binary_number}")
             CalculatorService._is_precise_update(number_representation)
@@ -56,8 +60,108 @@ class CalculatorService:
             raise e
 
     @staticmethod
+    def calculate_ieee_from_decimal(decimal_number: DecimalNumber, ieee_format: IEEEFormat):
+        print(f"Received decimal_number: {decimal_number}")
+        print(f"Using ieee_format: {ieee_format}")
+
+        # Initialize necessary instances
+        binary_number = BinaryNumber(is_positive=decimal_number.is_positive)
+        ieee_float = IEEEFloat(is_positive=decimal_number.is_positive)
+        number_representation = NumberRepresentation(
+            decimal_number=decimal_number,
+            ieee_format=ieee_format,
+            ieee_float=ieee_float,
+            binary_number=binary_number
+        )
+        #needs review:
+        try:
+            CalculatorService._calculate_scientific_bin_from_decimal(number_representation)
+            CalculatorService._is_precise_update(number_representation)
+            normalized_fractional_part_bin, left_shifts, right_shifts = CalculatorService._get_intermediary_mantissa_and_shifts(
+                number_representation)
+            normalized_fractional_part_bin = CalculatorService._remove_leading_1_from_intermediary_mantissa(
+                normalized_fractional_part_bin)
+
+            # Ensure normalized_fractional_part_bin has enough length
+            normalized_fractional_part_bin = CalculatorService._pad_normalized_fraction(normalized_fractional_part_bin,
+                                                                                        ieee_format.mantissa_length)
+
+            CalculatorService._calculate_and_update_calc_exp(number_representation, left_shifts, right_shifts)
+
+            need_to_round = CalculatorService._check_if_rounding_is_needed(number_representation,
+                                                                           normalized_fractional_part_bin)
+            if need_to_round:
+                normalized_fractional_part_bin = CalculatorService._rounding_mantissa(number_representation,
+                                                                                      normalized_fractional_part_bin)
+
+            CalculatorService._calculate_and_update_full_ieee_float(number_representation,
+                                                                    normalized_fractional_part_bin)
+            CalculatorService._pad_mantissa(number_representation)
+
+            return number_representation
+        except Exception as e:
+            print(f"Error during calculation: {e}")
+            raise e
+
+
+    @staticmethod
+    def _calculate_scientific_bin_from_decimal(number_representation):
+        decimal_number = number_representation.denary
+        ieee_format = number_representation.ieee_format
+        whole_part_bin = BinaryOperations.convert_int_to_binary(decimal_number.int_part)
+        numerator_bin = BinaryOperations.convert_int_to_binary(decimal_number.fractional_part)
+        denominator_bin = BinaryOperations.convert_int_to_binary(decimal_number.scale_factor)
+        print(f"numerator_bin: {numerator_bin}, denominator_bin: {denominator_bin}")
+        is_whole_part_zero = decimal_number.is_decimal_zero
+        fractional_part_bin, is_precise = BinaryOperations.convert_to_binary_fraction_fraction_part(
+            numerator_bin, denominator_bin, is_whole_part_zero, ieee_format
+        )
+        print(f"fractional_part_bin: {fractional_part_bin}, is_precise: {is_precise}")
+
+        binary_number = BinaryNumber(
+            binary_whole_part=whole_part_bin,
+            binary_fraction=fractional_part_bin,
+            is_positive=decimal_number.is_positive
+        )
+        number_representation.binary_number = binary_number
+
+    @staticmethod
+    def _create_special_representation_of_ieee_float(number_representation: NumberRepresentation):
+        ieee_float = number_representation.ieee_float
+        ieee_format = number_representation.ieee_format
+        if ieee_float.number_class == "NaN":
+            # call ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = _construct_nan_representation(ieee_format, ieee_float.is_positive)
+            return
+        elif ieee_float.number_class #contains infinity
+            # call ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = _construct_inf_representation(ieee_format, ieee_float.is_positive)
+        elif ieee_float.number_class #contains zero
+            # call ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = _construct_zero_representation(ieee_format, ieee_float.is_positive)
+        pass
+    @staticmethod
+    def _construct_nan_representation(ieee_format: IEEEFormat):
+        """
+        The method contructs a quiet NaN representation for a given IEEE format.
+        Returns:
+            - sign bit set to 0;
+            - exponent
+        """
+        pass
+    @staticmethod
+    def _construct_inf_representation(ieee_format, is_positive):
+        """
+
+        """
+        pass
+    @staticmethod
+    def _construct_zero_representation(ieee_format, is_positive):
+        mantissa = "0" * ieee_format.mantissa_length
+        exponent = "0" * ieee_format.exponent_length
+        sign_bit =  "0" if is_positive else "1"
+        return sign_bit, exponent, mantissa
+
+    @staticmethod
     def _calculate_and_update_binary_whole_and_fractional(number_representation):
-        fractional_number = number_representation.denary  # Use denary
+        fractional_number = number_representation.denary
         ieee_format = number_representation.ieee_format
         numerator_bin = BinaryOperations.convert_int_to_binary(fractional_number.numerator)
         denominator_bin = BinaryOperations.convert_int_to_binary(fractional_number.denominator)
@@ -70,6 +174,9 @@ class CalculatorService:
         is_whole_part_zero = BinaryOperations.is_whole_part_zero(whole_part_bin)
         print(
             f"remainder_after_whole_part: {remainder_bin}, denominator_bin: {denominator_bin}, is_whole_part_zero: {is_whole_part_zero}, ieee_format.mantissa_length: {ieee_format.mantissa_length}")
+        #check for subnormal - for further improvement SUBNORMAL REPRESENTATIONS
+        if not is_whole_part_zero:
+            is_subnormal = BinaryOperations.is_subnormal_whole_part(whole_part_bin, ieee_format.max_right_shifts)
 
         fractional_part_bin, is_precise = BinaryOperations.convert_to_binary_fraction_fraction_part(
             remainder_bin, denominator_bin, is_whole_part_zero, ieee_format

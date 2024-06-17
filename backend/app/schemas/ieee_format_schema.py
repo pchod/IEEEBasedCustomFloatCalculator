@@ -19,6 +19,7 @@ class IEEEFormatSchema(Schema):
     max_left_shifts = fields.Int(dump_only=True)
     max_right_shifts = fields.Int(dump_only=True)
 
+
     @post_load
     def make_ieee_format(self, data, **kwargs):
         return IEEEFormat(**data)

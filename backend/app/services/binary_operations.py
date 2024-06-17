@@ -9,20 +9,6 @@ from backend.app.models.denary_number import DenaryNumber
 
 
 class BinaryOperations:
-    
-    @staticmethod
-    def check_underflow(ieee_underflow_value, number):
-        """Returns a bool for underflow check. True, if the number is in the underflow range"""
-        return -ieee_underflow_value < number < ieee_underflow_value
-
-    @staticmethod
-    def check_overflow(ieee_overflow_value, number):
-        """Returns a bool for overflow check. True, if the number is above the overflow ranges"""
-        return number < -ieee_overflow_value or number > ieee_overflow_value
-
-    @staticmethod
-    def check_special_cases():
-        pass
 
     @staticmethod
     def compare_binaries(bin1: str, bin2: str) -> int:
@@ -456,8 +442,31 @@ class BinaryOperations:
         return (sign_bit, exponent, mantissa)
 
     @staticmethod
-    def convert_from_IEEE_to_binary_fraction():
-        pass
+    def is_subnormal_whole_part(whole_part_bin, max_right_shifts):
+        if not whole_part_bin:
+            return False
+        stripped_whole_part_bin = whole_part_bin.lstrip("0")
+        if not stripped_whole_part_bin:
+            return False
+        # if the length minus leading zero is within right shift ranges - it's normal
+        if len(stripped_whole_part_bin) - 1 <= max_right_shifts:
+            return False
+        # if the length is not in the range - it's subnormal
+        else:
+            return True
+    @staticmethod
+    def needed_right_shifts(whole_part_bin):
+        """
+        It is guaranteed, that the check for shifts was performed.
+        """
+        if not whole_part_bin:
+            return 0
+        stripped_whole_part_bin = whole_part_bin.lstrip("0")
+        if not stripped_whole_part_bin:
+            return 0
+        else:
+            # shifts needed to leave the leading 1
+            return len(stripped_whole_part_bin) - 1
 
     @staticmethod
     def convert_from_binary_fraction_to_denary():

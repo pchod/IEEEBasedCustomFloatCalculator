@@ -40,38 +40,20 @@ class FractionalNumber(DenaryNumber):
     def __init__(self, numerator: int, denominator=1, is_positive=True):
         self.is_positive = is_positive
         assert denominator != 0, "The denominator cannot be 0"
-        self.numerator_entered, self.denominator_entered = numerator, denominator
-        self.numerator, self.denominator = self._simplify_fraction(numerator, denominator)
+        self.numerator, self.denominator = numerator, denominator
         self.den_is_power_of_2 = self._is_den_power_of_2(self.denominator)
-        self.decimal_float_derived = self._convert_to_decimal()
-
-    def _convert_to_decimal(self):
-        """Returns decimal float representation of the fractional number"""
-        decimal_float = self.numerator / self.denominator
-        return decimal_float
+        self.decimal_float_derived = self.numerator / self.denominator
 
 
 class DecimalNumber(DenaryNumber):
     """ """
 
-    def __init__(self, int_part: str, fract_part: str, is_positive=True):
+    def __init__(self, int_part: int, fract_part: int, scale_factor: int,  is_positive=True):
         self.int_part = int_part
         self.fractional_part = fract_part
+        self.scale_factor = scale_factor
         self.is_positive = is_positive
         self.decimal_number = f"{int_part}.{fract_part}"
-        self.is_decimal_zero = True if all(char == '0' for char in int_part) and all(char == '0' for char in fract_part) else False
-        self.numerator_derived, self.denominator_derived = self._convert_to_fractional()
-        self.den_derived_is_power_of_2 = self._is_den_power_of_2(self.denominator_derived)
-
-# NEEDS CHANGE - TO WORK ONLY ON STRINGS PASSED
-    def _convert_to_fractional(self):
-        """Returns a tuple numerator, denominator"""
-        if self.is_decimal_zero:
-            return 0, 1
-        elif self.fractional_part == 0:
-            return self.int_part, 1
-        else:
-            fract_part_str = str(self.fractional_part).split(".")[1]
-            denominator = 10 ** len(fract_part_str)
-            numerator = int(fract_part_str) + self.int_part * denominator
-            return self._simplify_fraction(numerator, denominator)
+        self.is_decimal_zero = True if int_part == 0 and fractional_part == 0 else False
+        # self.numerator_derived, self.denominator_derived = self._convert_to_fractional()
+        # self.den_derived_is_power_of_2 = self._is_den_power_of_2(self.denominator_derived)
