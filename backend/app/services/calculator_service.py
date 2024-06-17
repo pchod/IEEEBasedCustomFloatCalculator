@@ -28,7 +28,9 @@ class CalculatorService:
         try:
             number_representation.ieee_float.number_class = IEEEUtils.get_ieee_class_for_fractional(number_representation.denary.decimal_float_derived, number_representation.denary.denominator, number_representation.denary.is_positive, number_representation.ieee_format.minimal_denary_normalised, number_representation.ieee_format.maximal_denary_normalised)
             # if number_representation.ieee_format.number_class != "normal" or "subnormal":
-
+            if number_representation.ieee_float.number_class not in {"normal", "subnormal"}:
+                CalculatorService._create_special_representation_of_ieee_float(number_representation)
+                return number_representation
             CalculatorService._calculate_and_update_binary_whole_and_fractional(number_representation)
             print(f"Binary representation: {number_representation.binary_number}")
             CalculatorService._is_precise_update(number_representation)
@@ -129,14 +131,14 @@ class CalculatorService:
     def _create_special_representation_of_ieee_float(number_representation: NumberRepresentation):
         ieee_float = number_representation.ieee_float
         ieee_format = number_representation.ieee_format
-        if ieee_float.number_class == "NaN":
-            # call ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = _construct_nan_representation(ieee_format, ieee_float.is_positive)
+        if ieee_float.number_class.lower() == "nan":
+            ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = CalculatorService._construct_nan_representation(ieee_format)
             return
-        elif ieee_float.number_class #contains infinity
-            # call ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = _construct_inf_representation(ieee_format, ieee_float.is_positive)
-        elif ieee_float.number_class #contains zero
-            # call ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = _construct_zero_representation(ieee_format, ieee_float.is_positive)
-        pass
+        elif "infinity" in ieee_float.number_class.lower():
+            ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = CalculatorService._construct_inf_representation(ieee_format, ieee_float.is_positive)
+        elif "zero" in ieee_float.number_class.lower():
+            ieee_float.sign_bit, ieee_float.exponent, ieee_float.mantissa = CalculatorService._construct_zero_representation(ieee_format, ieee_float.is_positive)
+
     @staticmethod
     def _construct_nan_representation(ieee_format: IEEEFormat):
         """
@@ -145,19 +147,26 @@ class CalculatorService:
             - sign bit set to 0;
             - exponent
         """
-        pass
+        sign_bit = "0"
+        exponent = "1" * ieee_format.exponent_length
+        mantissa = "1" + "0" * (ieee_format.mantissa_length - 1)
+        return sign_bit, exponent, mantissa
     @staticmethod
-    def _construct_inf_representation(ieee_format, is_positive):
+    def _construct_inf_representation(ieee_format: IEEEFormat, is_positive: bool):
         """
 
         """
-        pass
+        sign_bit = "0" if is_positive else "1"
+        exponent = "1" * ieee_format.exponent_length
+        mantissa = "0" * ieee_format.mantissa_length
+        return sign_bit, exponent, mantissa
     @staticmethod
-    def _construct_zero_representation(ieee_format, is_positive):
+    def _construct_zero_representation(ieee_format: IEEEFormat, is_positive: bool):
         mantissa = "0" * ieee_format.mantissa_length
         exponent = "0" * ieee_format.exponent_length
-        sign_bit =  "0" if is_positive else "1"
+        sign_bit = "0" if is_positive else "1"
         return sign_bit, exponent, mantissa
+
 
     @staticmethod
     def _calculate_and_update_binary_whole_and_fractional(number_representation):
