@@ -37,7 +37,7 @@ class IEEEFormat:
             self.max_mantissa_normalised_bin)
         self.minimal_denary_normalised = 2 ** self.minimum_exp_value
         self.maximal_denary_normalised = (2 - 2 ** -self.mantissa_length) * (2 ** self.maximum_exp_value)
-        self.max_left_shifts = self.maximum_exp_value + 1
+        self.max_left_shifts = self.maximum_exp_value
         self.max_right_shifts = abs(self.minimum_exp_value)
 
     def _convert_bin_to_int(self, binary: str):
