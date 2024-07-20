@@ -1,7 +1,5 @@
 # denary_number.py
 
-from models.ieee_format import IEEEFormat
-
 
 class DenaryNumber:
     """A parent class for representation of denary numbers"""
