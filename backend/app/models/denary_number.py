@@ -52,6 +52,6 @@ class DecimalNumber(DenaryNumber):
         self.scale_factor = scale_factor
         self.is_positive = is_positive
         self.decimal_number = f"{int_part}.{fract_part}"
-        self.is_decimal_zero = True if int_part == 0 and fractional_part == 0 else False
+        self.is_decimal_zero = True if int_part == 0 and fract_part == 0 else False
         # self.numerator_derived, self.denominator_derived = self._convert_to_fractional()
         # self.den_derived_is_power_of_2 = self._is_den_power_of_2(self.denominator_derived)
