@@ -25,12 +25,12 @@ The UI part will be designed in flask, while the whole backend I wrote in vanill
 
 🚧 In Progress 🚧
 
-The project is still in progress - the planned date of deployment is October 2024. Parts of the logic had underwent
+The project is still in progress - the planned date of deployment is March 2025. Parts of the logic had underwent
 unit tests and work as designed.
 
 ## Technical Overview
 
-Backend will be implented using Flask, frontend with React (using TypeScript).
+Backend will be implemented using Flask - early UI using views.
 
 ## Testing
 
